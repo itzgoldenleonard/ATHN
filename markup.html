@@ -38,7 +38,36 @@
         <pre> Meta</pre> <p> (0x20 0x4d 0x65 0x74 0x61) </p>
         <pre> Header</pre> <p> (0x20 0x48 0x65 0x61 0x64 0x65 0x72) </p>
         <pre> Footer</pre> <p> (0x20 0x46 0x6f 0x6f 0x74 0x65 0x72) </p>
+        <pre> Form</pre> <p> (0x20 0x46 0x6f 0x72 0x6d) </p>
 
-        <p> Whenever a section line is encountered it simply changes the current section to whichever section is specified after the "---". The default section is called "Main". If the current section is not "Main" and a section line is encountered, the current section is changed to "Main". Each section, except "Main", can only occur once in the document. The "Meta" section is REQUIRED and MUST occur as the first section in the document (meaning that the first line of all documents must be "--- Meta"). The "Header" and "Footer" sections can occur anywhere in the document. </p>
+        <p> Whenever a section line is encountered it simply changes the current section to whichever section is specified after the "---". The default section is called "Main". If the current section is not "Main" and a section line is encountered, the current section is changed to "Main". The "Meta", "Header" and "Footer" sections can only occur once in the document. The "Meta" section is REQUIRED and MUST occur as the first section in the document (meaning that the first line of all documents must be "--- Meta"). The "Header", "Footer" and "Form" sections can occur anywhere in the document. </p>
+
+        <h3> 2.3 Metadata lines </h3>
+        <p> Metadata lines are only available in the "Meta" section. In fact they are the only permitted line type in the "Meta" section. They start with 2 capitalized letters followed by a space and then the content of the tag, some can occur more than once, their order matters and MUST be preserved unless otherwise noted. These are the valid metadata tags and their rules, they MUST occur in this order in the document:</p>
+        <h4> 2.3.1 Title tag </h4>
+        <pre>TI </pre> <p> (0x54 0x49 0x20) </p>
+        <p> The title tag is REQUIRED, it can only occur once, maximum size is 2048 bytes. It SHOULD be shown to the human, typically in a big font at the top of the site, but can usually just be ignored by automatic clients. </p>
+        <h4> 2.3.2 Subtitle tag </h4>
+        <pre>ST </pre> <p> (0x53 0x54 0x20) </p>
+        <p> The subtitle tag can only occur once, the maximum size is 16384 bytes. It SHOULD be shown to the human.</p>
+        <h4> 2.3.3 Author tag </h4>
+        <pre>AU </pre> <p> (0x41 0x55 0x20) </p>
+        <p> The author tag can occur up to 16 times. Maximum size is 1024 bytes. </p>
+        <h4> 2.3.4 License tag </h4>
+        <pre>LI </pre> <p> (0x4c 0x49 0x20) </p>
+        <p> The license tag specifies what license the whole document is under, it applies to the whole document. It can be any identifier in the SPDX license list or a URL to a custom license. It can occur up to 4 times. The maximum size is 2048 bytes.</p>
+        <h4> 2.3.5 Language tag </h4>
+        <pre>LA </pre> <p> (0x4c 0x41 0x20) </p>
+        <p> The first occurence of the language tag tells the client what language the current document is (primarily) written in. All subsequent occurences mean that the document is also available in that language. Can occur up to 256 times. The content of the tag is a language string as defined in BCP47. It's important that the first occurence comes first, but the order of the rest is not important.</p>
+        <h4> 2.3.6 Cache duration tag</h4>
+        <pre>CH </pre> <p> (0x43 0x48 0x20) </p>
+        <p> The cache duration tag is an unsigned 32 bit integer, it can only occur once. It is the number of seconds that the page should be cached by clients that support caching. The special value of 0 is used for an infinite cache time.</p>
+
+        <h3> 2.4 Heading lines </h3>
+        <p> There are 6 levels of headings. Heading lines start with the "#" (0x23) character followed by a space. The number of "#" characters indicate the level of the heading. They are typically rendered with a bigger font than text lines, but simple clients MAY choose to treat them identically to text lines (with the "#" characters shown to the human). Headings do not support formatting. Conventionally the title metadata tag is used as the title of the page, not a level 1 heading. </p>
+
+        <h3> 2.5 Link lines </h3>
+
+
     </body>
 </html>

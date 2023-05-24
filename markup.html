@@ -10,8 +10,8 @@
         <h1> ATHN markup language specification </h1>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
         <h2> Introduction </h2>
-        <p> ATHN markup language is the backbone of the project, it's the plain text format that makes up every ATHN site. It's intended to be protocol agnostic. Right now https is used to exchange the markup files, but in theory any other protocol, maybe even a custom one specifically tailored to the needs of this project, could be used for that purpose. </p>
-        <p> Generally complexity is put on the client software, making the server software simpler to make site development easier </p>
+        <p> ATHN markup language is the backbone of the project, it's the plain text format that makes up every ATHN site. It's intended to be as protocol agnostic as reasonable. Right now https is used to exchange the markup files, but in theory any other protocol, maybe even a custom one specifically tailored to the needs of this project, could be used for that purpose. </p>
+        <p> Generally complexity is put on the client software, making the server software simpler to ease site development</p>
         <h2> 1 Terminology </h2>
         <p> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP14. </p>
         <p> A client is any software that recieves an ATHN markup document </p>
@@ -19,52 +19,71 @@
         <p> Whenever an example of a keyword is given in this specification it's case sensitive unless otherwise noted and has the bytes that make it up written in paretheses next to it. The bytes MUST match exactly, whitespace characters are not ignored.</p>
 
         <h2> 2 Line types </h2>
-        <p> An ATHN markup document is analyzed line by line. Each line has a type, which can be determined by looking at the first few characters. Each line type has its own rules about how it should be processed, and not all of them should be presented to humans. </p>
+        <p> An ATHN markup document can be analyzed line by line. Each line, except text lines, start with a 3 byte <em>line type identifier (LTI)</em> followed by the content of the line. Every line type has a unique LTI so that the type of any line can be determined unambiguously by knowing the section of the line and inspecting its first 3 bytes. If the first 3 bytes dont match any valid LTI, the line is considered a text line. Each line type has its own rules about how it should be processed, and not all of them should be presented to humans. Blank lines are ignored.</p>
 
         <h3> 2.1 Text lines </h3>
-        <p> As the name suggests text lines just contain plain text. If the line type cannot be determined to be something else it's a text line. Text lines are rendered as is. They have one special feature: formatting</p>
+        <p> As the name suggests text lines just contain plain text. Text lines are rendered as is. But they have one special feature: formatting </p>
+        <p> Text lines are available in the 'Main', 'Footer' and 'Form' sections</p>
+        <p> If the line type cannot be determined to be something else it's a text line. </p>
         <h4> 2.1.1 Text line formatting </h4>
-        <p> Text lines can contain a few special formatting character sequences, currently only 2, but more might be added in the future. They should not be rendered, but MAY be ignored. When the line ends all formatting is reset. The special sequences are as follows: </p>
-        <p> <pre>\b</pre> (0x5c 0x62) </p>
-        <p> Toggles bold text formatting </p>
-        <p> <pre>\i</pre> (0x5c 0x69) </p>
-        <p> Toggles italic text formatting </p>
+        <p> Text lines can contain a few special formatting character sequences, currently only 3, but more might be added in the future. They should not be rendered, but MAY be ignored. When the line ends all formatting is implicitly reset. The special sequences are as follows: </p>
+        <p> <kbd>\r</kbd> (0x5c 0x72) </p>
+        <p> Resets all formatting </p>
+        <p> <kbd>\b</kbd> (0x5c 0x62) </p>
+        <p> Enables bold text formatting </p>
+        <p> <kbd>\i</kbd> (0x5c 0x69) </p>
+        <p> Enables italic text formatting </p>
 
         <h3> 2.2 Section lines </h3>
-        <p> Section lines MUST NOT be rendered, they start with the following characters:</p>
-        <p> <pre>---</pre> (0x2d 0x2d 0x2d) </p>
-        <p> Followed by either: </p>
+        <p> Section lines MUST NOT be rendered. Section lines change the section of every following line (until a new section line is encountered). The 'Meta' section MUST be the first section in the document. Any of the other sections can occur on any line after the 'Meta' section.</p>
+        <p>The line type identifier for section lines is: <kbd>---</kbd> (0x2d 0x2d 0x2d)</p>
+        <p> The content of a section line is only valid if it is one of the following:</p>
         <p> Nothing </p>
-        <pre> Meta</pre> <p> (0x20 0x4d 0x65 0x74 0x61) </p>
-        <pre> Header</pre> <p> (0x20 0x48 0x65 0x61 0x64 0x65 0x72) </p>
-        <pre> Footer</pre> <p> (0x20 0x46 0x6f 0x6f 0x74 0x65 0x72) </p>
-        <pre> Form</pre> <p> (0x20 0x46 0x6f 0x72 0x6d) </p>
+        <p> Changes the section to 'Main'. It is required and must occur 1 or more times per document. </p>
+        <p> <kbd> Meta</kbd> (0x20 0x4d 0x65 0x74 0x61) </p>
+        <p> Changes the section to 'Meta'. The 'Meta' section is required and only allowed once. It MUST be the first section in the document.</p>
+        <p> <kbd> Header</kbd> (0x20 0x48 0x65 0x61 0x64 0x65 0x72) </p>
+        <p> Changes the section to 'Header'. Is optional and only allowed 1 or 0 times per document. </p>
+        <p> <kbd> Footer</kbd> (0x20 0x46 0x6f 0x6f 0x74 0x65 0x72) </p>
+        <p> Changes the section to 'Footer'. Is optional and only allowed 1 or 0 times per document. </p>
+        <p> <kbd> Form</kbd> (0x20 0x46 0x6f 0x72 0x6d) </p>
+        <p> Changes the section to 'Form'. Is optional and allowed any number of times per document. </p>
 
-        <p> Whenever a section line is encountered it simply changes the current section to whichever section is specified after the "---". The default section is called "Main". If the current section is not "Main" and a section line is encountered, the current section is changed to "Main". The "Meta", "Header" and "Footer" sections can only occur once in the document. The "Meta" section is REQUIRED and MUST occur as the first section in the document (meaning that the first line of all documents must be "--- Meta"). The "Header", "Footer" and "Form" sections can occur anywhere in the document. </p>
-
-        <h3> 2.3 Metadata lines </h3>
-        <p> Metadata lines are only available in the "Meta" section. In fact they are the only permitted line type in the "Meta" section. They start with 2 capitalized letters followed by a space and then the content of the tag, some can occur more than once, their order matters and MUST be preserved unless otherwise noted. These are the valid metadata tags and their rules, they MUST occur in this order in the document:</p>
+        <h3> 2.3 Metadata tag lines </h3>
+        <p> Metadata tag lines is a collection of line types, used for metadata, each type of metadata tag line is called a tag. Some tags can occur more than once, their order matters and MUST be preserved unless otherwise noted. </p>
+        <p> Metadata tag lines are only available in the 'Meta' section. In fact they are the only permitted line type in the 'Meta' section. </p> 
+        <p> The line type identifier for metadata tag lines is 2 capitalized letters followed by a space. </p>
+        <p> These are the valid metadata tags and their rules, they MUST occur in this order in the document:</p>
         <h4> 2.3.1 Title tag </h4>
-        <pre>TI </pre> <p> (0x54 0x49 0x20) </p>
+        <p> <kbd>TI </kbd> (0x54 0x49 0x20) </p>
         <p> The title tag is REQUIRED, it can only occur once, maximum size is 2048 bytes. It SHOULD be shown to the human, typically in a big font at the top of the site, but can usually just be ignored by automatic clients. </p>
         <h4> 2.3.2 Subtitle tag </h4>
-        <pre>ST </pre> <p> (0x53 0x54 0x20) </p>
+        <p> <kbd>ST </kbd> (0x53 0x54 0x20) </p>
         <p> The subtitle tag can only occur once, the maximum size is 16384 bytes. It SHOULD be shown to the human.</p>
         <h4> 2.3.3 Author tag </h4>
-        <pre>AU </pre> <p> (0x41 0x55 0x20) </p>
+        <p> <kbd>AU </kbd> (0x41 0x55 0x20) </p>
         <p> The author tag can occur up to 16 times. Maximum size is 1024 bytes. </p>
         <h4> 2.3.4 License tag </h4>
-        <pre>LI </pre> <p> (0x4c 0x49 0x20) </p>
+        <p> <kbd>LI </kbd> (0x4c 0x49 0x20) </p>
         <p> The license tag specifies what license the whole document is under, it applies to the whole document. It can be any identifier in the SPDX license list or a URL to a custom license. It can occur up to 4 times. The maximum size is 2048 bytes.</p>
         <h4> 2.3.5 Language tag </h4>
-        <pre>LA </pre> <p> (0x4c 0x41 0x20) </p>
+        <p> <kbd>LA </kbd> (0x4c 0x41 0x20) </p>
         <p> The first occurence of the language tag tells the client what language the current document is (primarily) written in. All subsequent occurences mean that the document is also available in that language. Can occur up to 256 times. The content of the tag is a language string as defined in BCP47. It's important that the first occurence comes first, but the order of the rest is not important.</p>
         <h4> 2.3.6 Cache duration tag</h4>
-        <pre>CH </pre> <p> (0x43 0x48 0x20) </p>
+        <p> <kbd>CH </kbd> (0x43 0x48 0x20) </p>
         <p> The cache duration tag is an unsigned 32 bit integer, it can only occur once. It is the number of seconds that the page should be cached by clients that support caching. The special value of 0 is used for an infinite cache time.</p>
 
         <h3> 2.4 Heading lines </h3>
-        <p> There are 6 levels of headings. Heading lines start with the "#" (0x23) character followed by a space. The number of "#" characters indicate the level of the heading. They are typically rendered with a bigger font than text lines, but simple clients MAY choose to treat them identically to text lines (with the "#" characters shown to the human). Headings do not support formatting. Conventionally the title metadata tag is used as the title of the page, not a level 1 heading. </p>
+        <p> There are 6 levels of heading lines. They are typically rendered in a bigger and differently weighted font than text lines. Simple clients MAY choose to treat them identically to text lines (with the LTI shown to the human). Headings do not support formatting, only text lines do. Conventionally the title metadata tag is used as the title of the page, not a level 1 heading. </p>
+        <p> Heading lines are available in the 'Main' and 'Form' sections. </p>
+        <p> The line type identifier for heading lines is a <kbd>#</kbd> (0x23) character, followed by a number corresponding to the level of the heading, followed by a space (0x20) character. That makes the following LTIs specify heading lines: </p>
+        <p> <kbd>#1 </kbd> (0x23 0x31 0x20): Level 1 heading line</p>
+        <p> <kbd>#2 </kbd> (0x23 0x32 0x20): Level 2 heading line</p>
+        <p> <kbd>#3 </kbd> (0x23 0x33 0x20): Level 3 heading line</p>
+        <p> <kbd>#4 </kbd> (0x23 0x34 0x20): Level 4 heading line</p>
+        <p> <kbd>#5 </kbd> (0x23 0x35 0x20): Level 5 heading line</p>
+        <p> <kbd>#6 </kbd> (0x23 0x36 0x20): Level 6 heading line</p>
+        <p> The content of a heading line can be anything </p>
 
         <h3> 2.5 Link lines </h3>
 

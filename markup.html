@@ -132,19 +132,28 @@
         <p> LTI: <kbd>\/ </kbd> (0x5c 0x2f 0x20) </p>
         <p> Dropdown lines start with the label followed by these 3 characters <kbd> | </kbd> (0x20 0x7c 0x20) followed by the hidden content </p>
 
-        <h3> 2.10 Heading lines </h3>
+        <h3> 2.10 Admonition lines </h3>
+        <p> Admonitions are callout boxes that directs your attention to warnings, notes, tips etc. They're often used in software documentation. ATHN markup has 3 types of admonitions used to convey different levels of importance.</p>
+        <p> Available in: 'Main' and 'Form' </p>
+        <p> LTIs: </p>
+        <p> <kbd>_! </kbd> (0x5f 0x21 0x20): Note admonition. Is no more important than the other lines in the document and doesnt need any special emphasis. </p>
+        <p> <kbd>*! </kbd> (0x2a 0x21 0x20): Warning admonition. Is important and needs to be emphasized accordingly. It's recommended to only have a few of these in each document. </p>
+        <p> <kbd>!! </kbd> (0x21 0x21 0x20): Danger admonition. Is the single most important piece of information in the entire document and needs strong emphasis. It's recommended not to have more than one of these in each document. </p>
+        <p> The content of an admonition line can be anything</p>
+
+        <h3> 2.11 Heading lines </h3>
         <p> There are 6 levels of heading lines. They are typically rendered in a bigger and differently weighted font than text lines. Simple clients MAY choose to treat them identically to text lines (with the LTI shown to the human). Headings do not support formatting, only text lines do. Conventionally the title metadata tag is used as the title of the page, not a level 1 heading. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: a <kbd>#</kbd> (0x23) character, followed by a number corresponding to the level of the heading, followed by a space (0x20) character. That makes the following LTIs specify heading lines: </p>
-        <p> <kbd>#1 </kbd> (0x23 0x31 0x20): Level 1 heading line</p>
-        <p> <kbd>#2 </kbd> (0x23 0x32 0x20): Level 2 heading line</p>
-        <p> <kbd>#3 </kbd> (0x23 0x33 0x20): Level 3 heading line</p>
-        <p> <kbd>#4 </kbd> (0x23 0x34 0x20): Level 4 heading line</p>
-        <p> <kbd>#5 </kbd> (0x23 0x35 0x20): Level 5 heading line</p>
-        <p> <kbd>#6 </kbd> (0x23 0x36 0x20): Level 6 heading line</p>
+        <p> LTI: a number corresponding to the level of the heading, followed by a <kbd>#</kbd> (0x23) character, followed by a space (0x20) character. That makes the following LTIs specify heading lines: </p>
+        <p> <kbd>1# </kbd> (0x31 0x23 0x20): Level 1 heading line</p>
+        <p> <kbd>2# </kbd> (0x32 0x23 0x20): Level 2 heading line</p>
+        <p> <kbd>3# </kbd> (0x33 0x23 0x20): Level 3 heading line</p>
+        <p> <kbd>4# </kbd> (0x34 0x23 0x20): Level 4 heading line</p>
+        <p> <kbd>5# </kbd> (0x35 0x23 0x20): Level 5 heading line</p>
+        <p> <kbd>6# </kbd> (0x36 0x23 0x20): Level 6 heading line</p>
         <p> The content of a heading line can be anything </p>
 
-        <h3> 2.11 Quote lines </h3>
+        <h3> 2.12 Quote lines </h3>
         <p> Quote lines are used for quotes. They are usually formatted in a certain way to indicate that the line is a quote, or might just by wrapped in quotation marks. Simple clients MAY choose to treat quote lines identically to text lines. Multiline quotes are not supported. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: <kbd>&gt&gt </kbd> (0x3e 0x3e 0x20) </p>
@@ -161,17 +170,29 @@
 
         <h2> 4 Forms </h2>
 
-        <!--
-            You've made it to the secret place where I note the things that might be cause for concern and should perhaps be changed.
+        <h2> 5 Uncompliant document behavior </h2>
+        <h3> 5.1 Client behavior </h3>
+        <p> A client MUST be able to parse a fully compliant ATHN markup document correctly. However, some of the things that might make a document uncompliant might not cause a client like that to catch the error. If an uncompliant document is given to a client it MAY try to parse it to the best of its abilities, erroring (in a user friendly manner) if it cant make sense of it, this includes trying to fix the errors, but that would be advanced to implement and wont always work. </p> 
+        <p> An example of such an uncompliance would be if the metadata tags are in the wrong order. Some clients might rely on the order of the metadata tags, and would interpret the document wrong or fail to interpret it entirely if the metadata tags are in the wrong order. While other clients might be completely oblivious to the order of the metadata tags and would interpret the document just fine. Both cases would be an acceptable way to handle the error. </p>
+        <p>Some clients, might be designed to validate the compliance of documents and provide helpful feedback if it finds any problems with them. These clients should of course always be completely accurate and correctly flag all possible uncompliant documents. They may also show recommendations for following best practices. </p>
+        <h3> 5.2 Server behavior </h3>
+        <p> It's important to note here that a server refers to any piece of software that transmits ATHN documents, which includes CGI scripts and other ways of doing server side rendering. </p>
+        <p> Servers SHOULD have some mechanism in place to ensure that the documents they transmit are always compliant. There are many different types of server software and it's up to the developer of the server to determine how to best ensure this. </p>
+        <p> Here are some examples of how you might implement such a check: </p>
+        <ul>
+            <li> A static server could make a check every time a new document is added to its document folder, notifying the user who added the document that its uncompliant. Or better yet, make the check part of the flow of adding a new document to the server, refusing to add the document if its uncompliant. </li>
+            <li> A CGI script could have unit/integration tests that ensure that it never produces an uncompliant document. </li>
+        </ul>
 
-            - Should whitespace automatically be trimmed from the beginning of lines? I wasnt initially much for it, because it could make the source code version of ATHN documents needlessly inconsistent. But since list lines dont get (actually) indented in the source code (which is a very good idea by the way) maybe we should allow people to indent the list item content after the LTI and just require that whitespace is trimmed at the beginning of the content of all lines
-            - Black lines are currently ignored, we could also just save the step of ignoring the blank lines by disallowing blank lines entirely?
-            - Maybe there should be some restrictions on the allowed bullet symbols in ordered list lines?
-            - Consider swapping the number and # characters in the heading LTI to make it more similar to that of the lists
-            - Should quotes support formatting?
-            - Do we want footnotes or another thing with the same function?
-            - Should we add strikethrough and or highlighted and or sub/superscript formatting?
-            - Should there be an (admonition)[https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions] line type?
-        -->
+        <h2> Appendix: Design decisions that need to be discussed </h2>
+        <ul>
+            <li> We could consider making the <kbd>+++ Meta</kbd> line implicit at the start of every document since it's required anyways. </li>
+            <li> There should be some restrictions on the allowed bullet symbols in ordered list lines, what would be sensible? </li>
+            <li> Blank lines are currently ignored, we could also just save the step of ignoring the blank lines (not that it's very hard) by disallowing blank lines entirely? The only downside is that you might find it a bit ugly or harder to read. </li>
+            <li> Should whitespace automatically be trimmed from the beginning of lines? I wasnt initially much for it, because it could make the source code version of ATHN documents needlessly inconsistent. But since list lines dont get (actually) indented in the source code (which is a very good idea by the way) maybe we should allow people to indent the list item content after the LTI and just require that whitespace is trimmed at the beginning of the content of all lines </li>
+            <li> Should quotes support formatting? </li>
+            <li> Do we want footnotes or another thing with the same function? </li>
+            <li> Should we add strikethrough and or highlighted and or sub/superscript formatting? </li>
+        </ul>
     </body>
 </html>

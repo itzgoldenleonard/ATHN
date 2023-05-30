@@ -8,7 +8,7 @@
     </head>
     <body>
         <h1> ATHN markup language specification </h1>
-        <p> Version: 0.1.0 (alpha) </p>
+        <p> Version: 0.1.1 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
@@ -275,11 +275,11 @@
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum number of elements allowed. </li>
             <li> <kbd>child</kbd> (0x63 0x68 0x69 0x6c 0x64): A space separated list of IDs of the child fields. </li>
         </ul>
-        <p> <b>Note: </b>This is the only case where the document flow can be broken, meaning that the order of the lines in the source document doesnt correspond to the order in the rendered document. That might become a problem, but it's currently unsolved. </p>
+        <p> <b>Note: </b>This is the only case where the document flow can be broken, meaning that the order of the lines in the source document doesnt correspond to the order in the rendered document. That might become a problem, but it's currently unsolved. For now the best thing to do is to always put child fields on the line immedeatly after their parent field. </p>
 
         <h4> 4.2.9 The date type </h4>
         <p> Type name: <kbd>date</kbd> (0x64 0x61 0x74 0x65) </p>
-        <p> The date type is a single time in the ISO 8601 format where the timezone is always UTC. The actual value is always in UTC but is should be presented to the human in local time. </p>
+        <p> The date type is a timestamp in the RFC 3339 format where the timezone is always UTC. The actual value is always in UTC but is should be presented to the human in local time. </p>
         <p> Valid properties: </p>
         <ul>
             <li> <kbd>min</kbd> (0x6d 0x69 0x6e): The oldest time allowed. The special value <kbd>now</kbd> (0x6e 0x6f 0x77) refers to the time of filling out the form field. </li>
@@ -320,6 +320,7 @@
         <ul>
             <li> We could consider making the <kbd>+++ Meta</kbd> line implicit at the start of every document since it's required anyways. </li>
             <li> There should be some restrictions on the allowed bullet symbols in ordered list lines, what would be sensible? </li>
+            <li> How do we handle the case (with list type form fields with children) where the document flow might be broken without destroying line orientation? </li>
             <li> Blank lines are currently ignored, we could also just save the step of ignoring the blank lines (not that it's very hard) by disallowing blank lines entirely? The only downside is that you might find it a bit ugly or harder to read. </li>
             <li> Maybe the order of the metadata tags shouldnt matter. It is a bunch of extra work in some cases to check it, does it even provide any potential benefits for the trouble? </li>
             <li> Should whitespace automatically be trimmed from the beginning of lines? I wasnt initially much for it, because it could make the source code version of ATHN documents needlessly inconsistent. But since list lines dont get (actually) indented in the source code (which is a very good idea by the way) maybe we should allow people to indent the list item content after the LTI and just require that whitespace is trimmed at the beginning of the content of all lines </li>

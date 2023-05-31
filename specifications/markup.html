@@ -4,10 +4,11 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="light dark" />
+        <link rel="stylesheet" href="../styles.css">
         <title> ATHN markup language specification </title
     </head>
     <body>
-        <h1> ATHN markup language specification </h1>
+        <h1 id="title"> ATHN markup language specification </h1>
         <p> Version: 0.1.1 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
@@ -83,7 +84,7 @@
         <h3> 2.4 Link lines </h3>
         <p> Link lines are used to redirect to any other document or file of any sort. Link lines are the primary (only) way to have images, video, other multimedia, tables and anything else not supported by ATHN markup in an ATHN markup document. They are of course also used to link to other ATHN documents. They are typically underlined, colored or have some other formatting that indicates that they're interactive. When activated by a human the link SHOULD open in their prefered app, the exception being other ATHN documents which MAY be opened/redirected to in the client app. </p>
         <p> Available in: 'Main', 'Header', 'Footer' and 'Form'. They are the only allowed line type in the 'Header' section. </p>
-        <p> LTI: <kbd>=> </kbd> (0x3d 0x3e 0x20) </p>
+        <p> LTI: <kbd>=&gt </kbd> (0x3d 0x3e 0x20) </p>
         <p> The content of a link line always starts with a URL (absolute or relative) with spaces and other reserved characters percent-encoded as per RFC 3986. Optionally followed by a space (0x20) character, followed by a label. When no label is specified, the url is shown, otherwise only the label is shown. If a label is present the client MAY still show the url to the human upon request. </p>
 
         <h3> 2.5 Preformatted lines </h3>

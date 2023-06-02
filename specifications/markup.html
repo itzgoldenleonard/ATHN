@@ -227,7 +227,7 @@
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum number of characters allowed. </li>
             <li> <kbd>multiline</kbd> (0x6d 0x75 0x6c 0x74 0x69 0x6c 0x69 0x6e 0x65): Allow new line characters. </li>
             <li> <kbd>secret</kbd> (0x73 0x65 0x63 0x72 0x65 0x74): Doesnt actually change the validation, but just tells the client that the content of the field should be hidden, used for passwords and similar. </li>
-            <li> <kbd>e</kbd> (0x65): Short for enumeration variant. Contains a valid value for the text field. You can have an arbitrary number of the properties for one text field to give it an arbitrary number of valid values. A string field that has 1 or more enumeration variants is only valid if the input matches one of the enumeration variants exactly, this feature is used where radio buttons would be in HTML. </li>
+            <li> <kbd>e</kbd> (0x65): Short for enumeration variant. Contains a valid value for the text field. You can have an arbitrary number of these properties for one text field to give it an arbitrary number of valid values. A string field that has 1 or more enumeration variants is only valid if the input matches one of the enumeration variants exactly, this feature is used where radio buttons would be in HTML. </li>
             <li> <kbd></kbd> (): </li>
         </ul>
 
@@ -264,7 +264,7 @@
         <p> Valid properties: </p>
         <ul>
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum allowed file size in bytes. </li>
-            <li> <kbd>type</kbd> (0x74 0x79 0x70 0x65): A space separated list of allowed MIME types. </li>
+            <li> <kbd>type</kbd> (0x74 0x79 0x70 0x65): Allowed MIME type. You can have an arbitrary number of these properties to allow an arbitrary number of MIME types for the field. </li>
         </ul>
 
         <h4> 4.2.8 The list type </h4>
@@ -274,7 +274,7 @@
         <ul>
             <li> <kbd>min</kbd> (0x6d 0x69 0x6e): The minimum number of elements allowed. The default is 1. </li>
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum number of elements allowed. </li>
-            <li> <kbd>child</kbd> (0x63 0x68 0x69 0x6c 0x64): A space separated list of IDs of the child fields. </li>
+            <li> <kbd>child</kbd> (0x63 0x68 0x69 0x6c 0x64): IDs of the child fields. You can have an arbitrary number of these properties to give the list field an arbitrary number of children. List fields can be children of other list fields. </li>
         </ul>
         <p> <b>Note: </b>This is the only case where the document flow can be broken, meaning that the order of the lines in the source document doesnt correspond to the order in the rendered document. That might become a problem, but it's currently unsolved. For now the best thing to do is to always put child fields on the line immedeatly after their parent field. </p>
 

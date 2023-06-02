@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1 id="title"> ATHN markup language specification </h1>
-        <p> Version: 0.1.1 (alpha) </p>
+        <p> Version: 0.1.2 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
@@ -204,7 +204,7 @@
         <ul>
             <li> <kbd>optional</kbd> (0x6f 0x70 0x74 0x69 0x6f 0x6e 0x61 0x6c) or <kbd>?</kbd> (0x3f): All fields are by default required, if this boolean property is applied to a field it is marked as optional. This property doesnt take any value. Is not applicable to the submit type. </li>
             <li> <kbd>label</kbd> (0x6c 0x61 0x62 0x65 0x6c) or <kbd>l</kbd> (0x6c): If this property is not applied the label of the field will be its ID. This property can be used to change the label to anything you like (as long as it doesnt contain <kbd> \</kbd> as that would start a new property). Also applies to the submit type. </li>
-            <li> <kbd>default</kbd> (0x64 0x65 0x66 0x61 0x75 0x6c 0x74) or <kbd>d</kbd> (0x64): Set a default value for the field. Can be used both on optional and required fields. Is not applicable to the submit type. </li>
+            <li> <kbd>default</kbd> (0x64 0x65 0x66 0x61 0x75 0x6c 0x74) or <kbd>d</kbd> (0x64): Set a default value for the field. Can be used both on optional and required fields. Is not applicable to the submit type or the file type. </li>
             <li> <kbd>c</kbd> (0x63): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is valid. Any field with this property MUST be optional. The field is not shown to the human unless the target field has a valid value or if the target field is true (only applies to booleans). Cant be combined with the !c property.</li>
             <li> <kbd>!c</kbd> (0x21 0x63): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is empty. Any field with this property MUST be optional. The field is not shown to the human unless the target field is empty or if the target field is false (only applies to booleans). Cant be combined with the c property.</li>
         </ul>
@@ -266,6 +266,7 @@
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum allowed file size in bytes. </li>
             <li> <kbd>type</kbd> (0x74 0x79 0x70 0x65): Allowed MIME type. You can have an arbitrary number of these properties to allow an arbitrary number of MIME types for the field. </li>
         </ul>
+        <em>Remember: The file type doesnt support the default property</em>
 
         <h4> 4.2.8 The list type </h4>
         <p> Type name: <kbd>list</kbd> (0x6c 0x69 0x73 0x74) </p>
@@ -275,6 +276,7 @@
             <li> <kbd>min</kbd> (0x6d 0x69 0x6e): The minimum number of elements allowed. The default is 1. </li>
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum number of elements allowed. </li>
             <li> <kbd>child</kbd> (0x63 0x68 0x69 0x6c 0x64): IDs of the child fields. You can have an arbitrary number of these properties to give the list field an arbitrary number of children. List fields can be children of other list fields. </li>
+            <li> The default property works a little differently for the list type than the other types, the default is an integer specifying the default number of elements in the list. </li>
         </ul>
         <p> <b>Note: </b>This is the only case where the document flow can be broken, meaning that the order of the lines in the source document doesnt correspond to the order in the rendered document. That might become a problem, but it's currently unsolved. For now the best thing to do is to always put child fields on the line immedeatly after their parent field. </p>
 
@@ -289,7 +291,7 @@
             <li> <kbd>date</kbd> (0x64 0x61 0x74 0x65): Boolean property. Only use the date part and dont allow any time of day to be entered. Cant be combined with the time property. </li>
         </ul>
 
-        <h4> 4.2.10 The email type </h4>
+        <h4> 4.2.10 The email address type </h4>
         <p> Type name: <kbd>email</kbd> (0x65 0x6d 0x61 0x69 0x6c) </p>
         <p> The email type represents an email address. </p>
         <p> Valid properties: Only the global properties </p>

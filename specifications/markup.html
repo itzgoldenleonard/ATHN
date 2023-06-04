@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1 id="title"> ATHN markup language specification </h1>
-        <p> Version: 0.1.2 (alpha) </p>
+        <p> Version: 0.1.3 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
@@ -60,41 +60,41 @@
         <h3> 2.3 Metadata tag lines </h3>
         <p> Metadata tag lines is a collection of line types, used for metadata, each type of metadata tag line is called a tag. Some tags can occur more than once, their order matters and MUST be preserved unless otherwise noted. </p>
         <p> Available in: 'Meta'. In fact they are the only permitted line type in the 'Meta' section. </p> 
-        <p> LTI: 2 capitalized letters followed by a space. </p>
+        <p> LTI: A letter referring to the tag name, followed by an <kbd>M</kbd> (0x4d) character, followed by a space (0x20) character. </p>
         <p> These are the valid metadata tags and their rules, they MUST occur in this order in the document:</p>
         <h4> 2.3.1 Title tag </h4>
-        <p> <kbd>TI </kbd> (0x54 0x49 0x20) </p>
+        <p> <kbd>TM </kbd> (0x54 0x4d 0x20) </p>
         <p> The title tag is REQUIRED, it can only occur once, maximum size is 2048 bytes. It SHOULD be shown to the human, typically in a big font at the top of the site, but can usually just be ignored by automatic clients. </p>
         <h4> 2.3.2 Subtitle tag </h4>
-        <p> <kbd>ST </kbd> (0x53 0x54 0x20) </p>
+        <p> <kbd>SM </kbd> (0x53 0x4d 0x20) </p>
         <p> The subtitle tag can only occur once, the maximum size is 16384 bytes. It SHOULD be shown to the human.</p>
         <h4> 2.3.3 Author tag </h4>
-        <p> <kbd>AU </kbd> (0x41 0x55 0x20) </p>
+        <p> <kbd>AM </kbd> (0x41 0x4d 0x20) </p>
         <p> The author tag can occur up to 16 times. Maximum size is 1024 bytes. </p>
-        <h4> 2.3.4 License tag </h4>
-        <p> <kbd>LI </kbd> (0x4c 0x49 0x20) </p>
-        <p> The license tag specifies what license the whole document is under, it applies to the whole document. It can be any identifier in the SPDX license list or a URL to a custom license. It can occur up to 4 times. The maximum size is 2048 bytes.</p>
         <h4> 2.3.5 Language tag </h4>
-        <p> <kbd>LA </kbd> (0x4c 0x41 0x20) </p>
+        <p> <kbd>LM </kbd> (0x4c 0x41 0x20) </p>
         <p> The first occurence of the language tag tells the client what language the current document is (primarily) written in. All subsequent occurences mean that the document is also available in that language. Can occur up to 256 times. The content of the tag is a language string as defined in BCP47. It's important that the first occurence comes first, but the order of the rest is not important.</p>
+        <h4> 2.3.4 License (usage _Rights) tag </h4>
+        <p> <kbd>RM </kbd> (0x4c 0x4d 0x20) </p>
+        <p> The license tag specifies what license the whole document is under, it applies to the whole document. It can be any identifier in the SPDX license list or a URL to a custom license. It can occur up to 4 times. The maximum size is 2048 bytes.</p>
         <h4> 2.3.6 Cache duration tag</h4>
-        <p> <kbd>CH </kbd> (0x43 0x48 0x20) </p>
+        <p> <kbd>CM </kbd> (0x43 0x4d 0x20) </p>
         <p> The cache duration tag is an unsigned 32 bit integer, it can only occur once. It is the number of seconds that the page should be cached by clients that support caching. The special value of 0 is used for an infinite cache time.</p>
 
         <h3> 2.4 Link lines </h3>
         <p> Link lines are used to redirect to any other document or file of any sort. Link lines are the primary (only) way to have images, video, other multimedia, tables and anything else not supported by ATHN markup in an ATHN markup document. They are of course also used to link to other ATHN documents. They are typically underlined, colored or have some other formatting that indicates that they're interactive. When activated by a human the link SHOULD open in their prefered app, the exception being other ATHN documents which MAY be opened/redirected to in the client app. </p>
         <p> Available in: 'Main', 'Header', 'Footer' and 'Form'. They are the only allowed line type in the 'Header' section. </p>
-        <p> LTI: <kbd>=&gt </kbd> (0x3d 0x3e 0x20) </p>
-        <p> The content of a link line always starts with a URL (absolute or relative) with spaces and other reserved characters percent-encoded as per RFC 3986. Optionally followed by a space (0x20) character, followed by a label. When no label is specified, the url is shown, otherwise only the label is shown. If a label is present the client MAY still show the url to the human upon request. </p>
+        <p> LTI: <kbd>@@@</kbd> (0x40 0x40 0x40) </p>
+        <p> The content of a link line always starts with a URL (absolute or relative) with spaces and other reserved characters percent-encoded as per RFC 3986. Optionally followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter, followed by a label. When no label is specified, the url is shown, otherwise only the label is shown. If a label is present the client MAY still show the url to the human upon request. </p>
 
         <h3> 2.5 Preformatted lines </h3>
         <p> Preformatted lines are rendered in a monospaced font with unaltered whitespace. Preformatted lines SHOULD NOT be wrapped. Preformatted lines are used for things like source code, terminal outputs, ASCII art or anything else where it's important to preserve whitespacing or use a fixed width font. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: <kbd>```</kbd> (0x60 0x60 0x60) </p>
+        <p> LTI: <kbd>;;;</kbd> (0x3b 0x3b 0x3b) </p>
         <p> Alternative LTI: <kbd>'''</kbd> (0x27 0x27 0x27) can be used to indicate that the content of the preformatted line is textual and makes sense to read (this would mean that a screen reader would read it out loud). The difference between the 2 LTIs is purely a matter of accessibility role. </p>
         <h4> 2.5.1 Code blocks </h4>
         <p> Advanced clients MAY choose to render continous sequences of preformatted lines into a single "code" block. If they do that they MUST not differentiate between the 2 different types of preformatted lines. </p>
-        <p> If an author makes a code block containing for example ASCII art, they can chose to start the block with a line beginning with <kbd>'''</kbd> and containing a title which would be read aloud by the screen reader. Then make the rest of the block's lines start with <kbd>```</kbd> which would, correctly, not be read by the screen reader since it isnt text. </p>
+        <p> If an author makes a code block containing for example ASCII art, they can chose to start the block with a line beginning with <kbd>'''</kbd> and containing a title which would be read aloud by the screen reader. Then make the rest of the block's lines start with <kbd>;;;</kbd> which would, correctly, not be read by the screen reader since it isnt text. </p>
         <h4> 2.5.2 Source code highlighting </h4>
         <p> It would be unreasonable to assume of clients that they can correctly highlight source code of any kind. If you want source code to be highlighted you can use ASCII control codes to do the highlighting, but dont expect all clients to show the highlighting. This has the benefit that you can be sure that your source code is always correctly highlighted (if the client supports it). With the drawback that it's more difficult for you to write it. Another drawback is that the client wont get to apply its own color scheme. </p> 
         <p> The reasoning behind this decision is that if there's one thing that's worse than unhighlighted source code, it's incorrectly highligted source code, and you cant expect clients to know every code language in the world. </p>
@@ -102,40 +102,40 @@
         <h3> 2.6 Separator </h3>
         <p> The separator line type is used to separate paragraphs, code blocks or in other circumstances where you might otherwise use a blank line. Since blank lines are ignored and using text lines containing nothing but whitespace is hacky. Separator lines are rendered as a horizontal line, extra spacing or something similar. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: <kbd>---</kbd> (0x5f 0x5f 0x5f) </p>
+        <p> LTI: <kbd>===</kbd> (0x3d 0x3d 0x3d) </p>
         <p> Separator lines MUST NOT contain any content </p>
 
         <h3> 2.7 Unordered list lines </h3>
         <p> Unordered list lines are lines rendered starting with a bullet (the specific symbol is up to the client and could differ depending on the level of indentation) and indented to indicate that it's part of a list. Unordered lists support 6 levels of indentation. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: a number corresponding to the level of indentation followed by a <kbd>*</kbd> (0x2a) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
-        <p> <kbd>1* </kbd> (0x31 0x2a 0x20): Unordered list line indented by 1</p>
-        <p> <kbd>2* </kbd> (0x32 0x2a 0x20): Unordered list line indented by 2</p>
-        <p> <kbd>3* </kbd> (0x33 0x2a 0x20): Unordered list line indented by 3</p>
-        <p> <kbd>4* </kbd> (0x34 0x2a 0x20): Unordered list line indented by 4</p>
-        <p> <kbd>5* </kbd> (0x35 0x2a 0x20): Unordered list line indented by 5</p>
-        <p> <kbd>6* </kbd> (0x36 0x2a 0x20): Unordered list line indented by 6</p>
+        <p> LTI: a number corresponding to the level of indentation followed by a <kbd>-</kbd> (0x2d) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
+        <p> <kbd>1- </kbd> (0x31 0x2d 0x20): Unordered list line indented by 1</p>
+        <p> <kbd>2- </kbd> (0x32 0x2d 0x20): Unordered list line indented by 2</p>
+        <p> <kbd>3- </kbd> (0x33 0x2d 0x20): Unordered list line indented by 3</p>
+        <p> <kbd>4- </kbd> (0x34 0x2d 0x20): Unordered list line indented by 4</p>
+        <p> <kbd>5- </kbd> (0x35 0x2d 0x20): Unordered list line indented by 5</p>
+        <p> <kbd>6- </kbd> (0x36 0x2d 0x20): Unordered list line indented by 6</p>
         <p> The content of an unordered list line can be anything </p>
 
         <h3> 2.8 Ordered list lines </h3>
         <p> Ordered list lines are identical to unordered list lines except the author gets to choose the bullet. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: a number corresponding to the level of indentation followed by a <kbd>-</kbd> (0x2d) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
-        <p> <kbd>1- </kbd> (0x31 0x2d 0x20): Ordered list line indented by 1</p>
-        <p> <kbd>2- </kbd> (0x32 0x2d 0x20): Ordered list line indented by 2</p>
-        <p> <kbd>3- </kbd> (0x33 0x2d 0x20): Ordered list line indented by 3</p>
-        <p> <kbd>4- </kbd> (0x34 0x2d 0x20): Ordered list line indented by 4</p>
-        <p> <kbd>5- </kbd> (0x35 0x2d 0x20): Ordered list line indented by 5</p>
-        <p> <kbd>6- </kbd> (0x36 0x2d 0x20): Ordered list line indented by 6</p>
-        <p> The content of an ordered list line starts with the bullet symbol(s) followed by a space character (0x20) followed by the content of the list item </p>
+        <p> LTI: a number corresponding to the level of indentation followed by a <kbd>*</kbd> (0x2a) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
+        <p> <kbd>1* </kbd> (0x31 0x2a 0x20): Ordered list line indented by 1</p>
+        <p> <kbd>2* </kbd> (0x32 0x2a 0x20): Ordered list line indented by 2</p>
+        <p> <kbd>3* </kbd> (0x33 0x2a 0x20): Ordered list line indented by 3</p>
+        <p> <kbd>4* </kbd> (0x34 0x2a 0x20): Ordered list line indented by 4</p>
+        <p> <kbd>5* </kbd> (0x35 0x2a 0x20): Ordered list line indented by 5</p>
+        <p> <kbd>6* </kbd> (0x36 0x2a 0x20): Ordered list line indented by 6</p>
+        <p> The content of an ordered list line starts with the bullet symbol(s) followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter followed by the content of the list item </p>
         <h4> 2.8.1 Considerations about custom bullets </h4>
         <p> Requiring the author to number the list items themselves is a bit more difficult on the author. But it does also provide a lot of flexibility in terms of how you choose to number them. You could number them with numbers, letters, roman numerals or not number them at all but just use a special bullet symbol (this would be how you do checklists). It also allows you to stick a text line in between 2 list items in an ordered list without breaking the numbering flow. </p>
 
         <h3> 2.9 Dropdown lines </h3>
         <p> A dropdown is used to hide a long and not neccesary to read paragraph behind a shorter label. Only the label is shown until the human requests to see the hidden content of the dropdown line. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: <kbd>\/ </kbd> (0x5c 0x2f 0x20) </p>
-        <p> Dropdown lines start with the label followed by these 3 characters <kbd> | </kbd> (0x20 0x7c 0x20) followed by the hidden content </p>
+        <p> LTI: <kbd>...</kbd> (0x2e 0x2e 0x2e) </p>
+        <p> Dropdown lines start with the label followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter, followed by the hidden content </p>
 
         <h3> 2.10 Admonition lines </h3>
         <p> Admonitions are callout boxes that directs your attention to warnings, notes, tips etc. They're often used in software documentation. ATHN markup has 3 types of admonitions used to convey different levels of importance.</p>
@@ -161,8 +161,18 @@
         <h3> 2.12 Quote lines </h3>
         <p> Quote lines are used for quotes. They are usually formatted in a certain way to indicate that the line is a quote, or might just by wrapped in quotation marks. Simple clients MAY choose to treat quote lines identically to text lines. Multiline quotes are not supported. </p>
         <p> Available in: 'Main' and 'Form' </p>
-        <p> LTI: <kbd>&gt&gt </kbd> (0x3e 0x3e 0x20) </p>
+        <p> LTI: <kbd>///</kbd> (0x2f 0x2f 0x2f) </p>
         <p> The content of quote lines can be anything </p>
+
+        <h3> 2.13 A note on LTI patterns </h3>
+        <p> All 35 LTIs have been selected carefully to follow specific patterns, whose purpose is to make it easer to parse (mostly for machines). They all fall into one of these two catergories: </p>
+        <ol>
+            <li> There is only 1 sub type for the line type that corresponds to the LTI </li>
+            <li> There is more than 1 sub type (like heading lines) for the line type that corresponds to the LTI </li>
+        </ol>
+        <p> For LTIs that fall into the 1st category all 3 characters are identical. </p>
+        <p> For LTIs that fall into the 2nd category, the first character defines the sub type, the second character defines the line type and the third character is a space. </p>
+        <p> Also, there are 3 line types where the content consists of 2 parts separated by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter. The second character in the LTI of those line types has an ASCII code that's divisible by 2 (which none of the others are). </p>
 
 
         <h2> 3 Section rules </h2>
@@ -182,7 +192,7 @@
 
         <h3> 4.1 Form field lines </h3>
         <p> Available in: 'Form'</p>
-        <p> LTI: <kbd>[] </kbd> </p>
+        <p> LTI: <kbd>???</kbd> (0x3f 0x3f 0x3f) </p>
         <p> The content of a form field line goes like this: </p> 
         <ol>
             <li> The ID of the field, this can consist of the ASCII letters <kbd>a</kbd>-<kbd>z</kbd> (0x61-0x7a), <kbd>A</kbd>-<kbd>Z</kbd> (0x41-0x5a) and the <kbd>_</kbd> (0x5f) character. Snake case is recommended. </li>

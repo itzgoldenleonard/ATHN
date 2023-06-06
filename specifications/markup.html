@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1 id="title"> ATHN markup language specification </h1>
-        <p> Version: 0.1.3 (alpha) </p>
+        <p> Version: 0.1.4 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
@@ -43,13 +43,11 @@
         <p> On the rare occation that you do need to write any of the control sequences in a text line you can write it like this <kbd>\​b</kbd> (0x5c 0xe2 0x80 0x8b 0x62) with a zero width space or similar in between the backslash character and the letter </p>
 
         <h3> 2.2 Section lines </h3>
-        <p> Section lines MUST NOT be rendered. Section lines change the section of every following line (until a new section line is encountered). The 'Meta' section MUST be the first section in the document. Any of the other sections can occur on any line after the 'Meta' section.</p>
+        <p> Section lines MUST NOT be rendered. Section lines change the section of every following line (until a new section line is encountered). The section starts off as 'Meta' on the first line of any document. Any of the other sections can occur on any line after the 'Meta' section.</p>
         <p> LTI: <kbd>+++</kbd> (0x2d 0x2d 0x2d)</p>
         <p> The content of a section line is only valid if it is one of the following:</p>
         <p> Nothing </p>
         <p> Changes the section to 'Main'. It is required and must occur 1 or more times per document. </p>
-        <p> <kbd> Meta</kbd> (0x20 0x4d 0x65 0x74 0x61) </p>
-        <p> Changes the section to 'Meta'. The 'Meta' section is required and only allowed once. It MUST be the first section in the document.</p>
         <p> <kbd> Header</kbd> (0x20 0x48 0x65 0x61 0x64 0x65 0x72) </p>
         <p> Changes the section to 'Header'. Is optional and only allowed 1 or 0 times per document. </p>
         <p> <kbd> Footer</kbd> (0x20 0x46 0x6f 0x6f 0x74 0x65 0x72) </p>
@@ -206,17 +204,19 @@
                 <li> The value of the property. The property value continues until a new property is encountered or the line ends. Some properties are boolean and have a default behavior that can be overridden by just applying the property to a field, they therefore dont have any value. </li>
             </ol>
         </ol>
+        <p> Here is an example of a correctly formatted form field </p>
+        <pre>???password:string \secret \min 12 \max 64 \label Choose your password</pre>
 
         <h3> 4.2 Form field types </h3>
 
         <h4> 4.2.1 Global properties </h4>
         <p> These properties can be used on all (except submit) types. </p>
         <ul>
-            <li> <kbd>optional</kbd> (0x6f 0x70 0x74 0x69 0x6f 0x6e 0x61 0x6c) or <kbd>?</kbd> (0x3f): All fields are by default required, if this boolean property is applied to a field it is marked as optional. This property doesnt take any value. Is not applicable to the submit type. </li>
-            <li> <kbd>label</kbd> (0x6c 0x61 0x62 0x65 0x6c) or <kbd>l</kbd> (0x6c): If this property is not applied the label of the field will be its ID. This property can be used to change the label to anything you like (as long as it doesnt contain <kbd> \</kbd> as that would start a new property). Also applies to the submit type. </li>
-            <li> <kbd>default</kbd> (0x64 0x65 0x66 0x61 0x75 0x6c 0x74) or <kbd>d</kbd> (0x64): Set a default value for the field. Can be used both on optional and required fields. Is not applicable to the submit type or the file type. </li>
-            <li> <kbd>c</kbd> (0x63): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is valid. Any field with this property MUST be optional. The field is not shown to the human unless the target field has a valid value or if the target field is true (only applies to booleans). Cant be combined with the !c property.</li>
-            <li> <kbd>!c</kbd> (0x21 0x63): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is empty. Any field with this property MUST be optional. The field is not shown to the human unless the target field is empty or if the target field is false (only applies to booleans). Cant be combined with the c property.</li>
+            <li> <kbd>optional</kbd> (0x6f 0x70 0x74 0x69 0x6f 0x6e 0x61 0x6c): All fields are by default required, if this boolean property is applied to a field it is marked as optional. This property doesnt take any value. Is not applicable to the submit type. </li>
+            <li> <kbd>label</kbd> (0x6c 0x61 0x62 0x65 0x6c): If this property is not applied the label of the field will be its ID. This property can be used to change the label to anything you like (as long as it doesnt contain <kbd> \</kbd> as that would start a new property). Also applies to the submit type. </li>
+            <li> <kbd>default</kbd> (0x64 0x65 0x66 0x61 0x75 0x6c 0x74): Set a default value for the field. Can be used both on optional and required fields. Is not applicable to the submit type or the file type. </li>
+            <li> <kbd>conditional</kbd> (0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is valid. Any field with this property MUST be optional. The field is not shown to the human unless the target field has a valid value or if the target field is true (only applies to booleans). Cant be combined with the !c property.</li>
+            <li> <kbd>!conditional</kbd> (0x21 0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of another target field. Make the field this property is applied to conditionally available depending on whether the target field is empty. Any field with this property MUST be optional. The field is not shown to the human unless the target field is empty or if the target field is false (only applies to booleans). Cant be combined with the c property.</li>
         </ul>
 
         <h4> 4.2.2 The submit type </h4>
@@ -224,7 +224,7 @@
         <p> This is the special submit type, it is the only type that doesnt take any input. Instead it behaves like a button and can only be used once per 'Form' section. When activated it verifies that all of the form fields in the 'Form' section that it's in are validly filled out. If they're not it will refuse to submit, notifying the user of the error. If they are valid it will submit the form response, this process depends on what protocol is used. The ID of the submit button is only used to set its default label, it doesnt matter otherwise. </p>
         <p> Valid properties: </p>
         <ul>
-            <li> <kbd>dest</kbd> (0x64 0x65 0x73 0x74): A url, absolute or relative with spaces and other reserved characters percent-encoded as per RFC 3986. This is the url that the form response should be sent to. This is the only REQUIRED property for this type. </li>
+            <li> <kbd>destination</kbd> (0x64 0x65 0x73 0x74 0x69 0x6e 0x61 0x74 0x69 0x6f 0x6e): A url, absolute or relative with spaces and other reserved characters percent-encoded as per RFC 3986. This is the url that the form response should be sent to. This is the only REQUIRED property for this type. </li>
             <li> <kbd>redirect</kbd> (0x72 0x65 0x64 0x69 0x72 0x65 0x63 0x74): Boolean property. When applied it will instruct the client to redirect to the document sent back by the server upon a successful form response (protocol specific implementation). Does not redirect on an unsuccessful response. </li>
         </ul>
 
@@ -237,8 +237,7 @@
             <li> <kbd>max</kbd> (0x6d 0x61 0x78): The maximum number of characters allowed. </li>
             <li> <kbd>multiline</kbd> (0x6d 0x75 0x6c 0x74 0x69 0x6c 0x69 0x6e 0x65): Allow new line characters. </li>
             <li> <kbd>secret</kbd> (0x73 0x65 0x63 0x72 0x65 0x74): Doesnt actually change the validation, but just tells the client that the content of the field should be hidden, used for passwords and similar. </li>
-            <li> <kbd>e</kbd> (0x65): Short for enumeration variant. Contains a valid value for the text field. You can have an arbitrary number of these properties for one text field to give it an arbitrary number of valid values. A string field that has 1 or more enumeration variants is only valid if the input matches one of the enumeration variants exactly, this feature is used where radio buttons would be in HTML. </li>
-            <li> <kbd></kbd> (): </li>
+            <li> <kbd>variant</kbd> (0x76 0x61 0x72 0x69 0x61 0x6e 0x74): Contains a valid value for the text field. You can have an arbitrary number of these properties for one text field to give it an arbitrary number of valid values. A string field that has 1 or more enumeration variants is only valid if the input matches one of the enumeration variants exactly, this feature is used where radio buttons would be in HTML. </li>
         </ul>
 
         <h4> 4.2.4 The integer type </h4>
@@ -265,8 +264,8 @@
 
         <h4> 4.2.6 The boolean type </h4>
         <p> Type name: <kbd>bool</kbd> (0x62 0x6f 0x6f 0x6c) </p>
-        <p> A boolean is either true or false. Optional booleans SHOULD have some way to be reset back to the indeterminate state </p>
-        <p> Valid properties: Only the global properties </p>
+        <p> A boolean is either true or false. If the boolean is optional it can also be undecided. Optional booleans SHOULD have some way to be reset back to the undecided state. If a default value hasnt been specified with the default property the boolean field defaults to false if the field is required and undecided if the field is optional. </p>
+        <p> Valid properties: Only the global properties. Default property can have the values <kbd>true</kbd> (0x74 0x72 0x75 0x65) or <kbd>false</kbd> (0x66 0x61 0x6c 0x73 0x65) </p>
 
         <h4> 4.2.7 The file (binary) type </h4>
         <p> Type name: <kbd>file</kbd> (0x66 0x69 0x6c 0x65) </p>
@@ -331,7 +330,6 @@
 
         <h2> Appendix: Design decisions that need to be discussed </h2>
         <ul>
-            <li> We could consider making the <kbd>+++ Meta</kbd> line implicit at the start of every document since it's required anyways. </li>
             <li> There should be some restrictions on the allowed bullet symbols in ordered list lines, what would be sensible? </li>
             <li> How do we handle the case (with list type form fields with children) where the document flow might be broken without destroying line orientation? </li>
             <li> Blank lines are currently ignored, we could also just save the step of ignoring the blank lines (not that it's very hard) by disallowing blank lines entirely? The only downside is that you might find it a bit ugly or harder to read. </li>
@@ -341,6 +339,7 @@
             <li> Do we want footnotes or another thing with the same function? </li>
             <li> Should we add strikethrough and or highlighted and or sub/superscript formatting? </li>
             <li> Do we need a color form field type? </li>
+            <li> Should we add a prefix/suffix property to string and number type form fields? </li>
             <li> How do we let someone upload multiple files to a single file type form field? </li>
             <li> Maybe there should also be an option to choose other types of times in the date type form field. Like a property that allows you to choose a week or a year. </li>
         </ul>

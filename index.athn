@@ -1,0 +1,39 @@
+TM Project ATHN
+SM A system, that's as simple as possible, that allows people to find, share and interact with information. While also having built in solutions to common problems
+RM CC0-1.0
++++
+@@@specifications/ | See the project ATHN specifications. Currently in their very early stages
+
+1# The 3 core philosophical pillars of ATHN
+\bSimplicity\r: Both technical minimalism and simplicity of use (for authors, developers and users alike) - To keep the focus on what's most important, and to maximize security and speed
+\bAccessibility\r: Provide a good and usable experience to as many as possible, no matter what languages they speak, what device they use, where they are etc.
+\bUser first\r: Let the end users choose as much as possible, what information they send to sites, how sites visually look etc. - To increase privacy and provide the best experience to everyone
+
+1# Common problems that need a canon solution
+1- Translations 
+1- Authentication/Authorization 
+1- Encryption 
+1- And possibly more
+
+@@@https://gemini.circumlunar.space/ | Check out project gemini for inspiration, it solves a different problem in a similar way
+
+1# Get involved
+2# Join the discussion
+@@@https://www.reddit.com/r/ATHN/ | Subreddit
+@@@https://matrix.to/#/#athn:matrix.org | Matrix room
+
+2# Software
+One of the big ways that you can help is by working on software that works with project ATHN, something we're currently low on. The standards should be made using the experiences gathered by writing software for them, so if you become an ATHN software developer you will automatically become that much more knowledgable when it comes to developing the standards. Start a completely new software project of your own or contribute to one of these existing ones:
+@@@software.html | Software repository
+
+1# Read more:
+2# (Video) Series on project ATHN:
+@@@gemini://gemlog.blue/users/itzgoldenleonard/ | Ava's semi official project ATHN blog (on gemini)
+@@@https://portal.mozz.us/gemini/gemlog.blue/users/itzgoldenleonard/ | Ava's semi official project ATHN blog (on a web proxy)
+@@@https://odysee.com/@itzgoldenleonard:6/web-alternative1:1 | Fixing the Web part 1 : I've had enough
+@@@https://odysee.com/@itzgoldenleonard:6/Web-alternative-2:4 | Fixing the Web part 2 : Transpilers, Pink Elephants and Project ATHN
+@@@https://odysee.com/@itzgoldenleonard:6/athn-concept | Project ATHN concept : The vision for the developer experience
+2# Why the web needs to be replaced
+@@@https://youtu.be/yodWEPgn8NA | Jonathan Blow on the collapse of web programming jobs
+@@@https://zaibatsu.circumlunar.space/~solderpunk/web.html | ~solderpunk's (the creator of gemini) criticisms of the web. I'd recommend you start with 'The Bullshit Web'
+@@@https://youtu.be/2jqS7wN-yzs | Jonathan Blow on the problem with the web

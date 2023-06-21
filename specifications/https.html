@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
+        <link rel="stylesheet" href="../styles.css">
+        <title> ATHN over https specification </title
+    </head>
+    <body>
+        <h1 id="title"> ATHN over https specification </h1>
+        <p> Version: 0.1.0 (alpha) </p>
+        <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
+
+
+        <h2> Introduction </h2>
+        <p> The ATHN system is a client server system where the client first sends one read or write request and the server responds with one response. </p>
+        <p> While ATHN markup documents are a big part of the ATHN system, they cant do everything the system supports on their own. The ATHN over <em>x protocol</em> specifications are not only responsible for making transactions over the network but also these features: </p>
+        <ul>
+            <li> Encryption </li>
+            <li> Authentication/authorization </li>
+            <li> Language selection </li>
+            <li> Server side form validation </li>
+        </ul>
+        <p> This specification is for using ATHN over https, not http. Encryption is REQUIRED, ATHN transactions MUST NOT use http. </p>
+        
+
+        <h2> 1 This is for testing purposes </h2>
+        <p> This specification is temporary until we find a better solution. https is not suitable for ATHN in the long run for various reasons. The main reason for going with https for this temporary specification is its rich software ecosystem. </p>
+        <h3> 1.1 https is too complex </h3>
+        <p> https has a lot of features, most of which arent necessary or useful for ATHN. This complexity makes software unnecessarily harder to write, especially if you dont use libraries. </p>
+        <p> This doesnt line up with ATHNs philosophy of being as simple as possible. </p>
+
+        <h3> 1.2 https forces you to use X.509 certificates </h3>
+        <p> Much like https, X.509 certificates are needlessly complicated and have lots of useless features for ATHN. All we need certificates for is encryption and access control. There's no need for all the arbitrary metadata or certificate chaining and all of the extra bloat that X.509 has added on top of simple public key cryptography. </p>
+        <p> I would much rather use ssh keys than X.509, but https doesnt support that. </p>
+        <p> Because of all of this complexity, if you want to work with X.509 certificates you're more or less forced to use openssl, which is a bloated, legacy program full of security and code quality problems. There have been attempts to replace openssl without much success because it relies on an overcomplicated set of standards to begin with, something that ATHN is literally made to avoid. </p>
+
+        <h3> 1.3 https can be used for tracking </h3>
+        <p> While it's possible to use https in a stateless way, without leaking any information that could be used to track you, which is what's recommended in this specification. That is extremely difficult due to https' (not to mention https software's) design. The protocol may not have been designed with tracking in mind, but it also hasnt been designed to avoid tracking. Over the years though, https has been extended and used in ways that make it a privacy nightmare. </p> 
+        <p> One of ATHNs main goals is to make privacy preservation the default, and to make privacy violations a hard mistake to make. https doesnt allow this. </p>
+
+
+        <h2> 2 Read requests </h2>
+        <p> A client can send a read request to a server to ask for a document by issuing an https GET request. The server will respond with an error or the document that was requested. A read request only contains 3 pieces of information. Clients should avoid sending more information than necessary, and servers should avoid processing more information than necessary to preserve privacy. </p>
+        <ol>
+            <li> The document that's being requested </li>
+            <li> <b>Optionally:</b> A list of preferred languages </li>
+            <li> <b>Optionally:</b> A client certificate </li>
+        </ol>
+        <p> Here is a curl command that shows how to properly send an ATHN read request. </p>
+        <pre>curl -k --cert cert.p12 --cert-type p12 -H "Accept-Language: en, da" https://itzgoldenleonard.github.io/ATHN/index.athn</pre>
+
+        <h3> 2.1 Language selection </h3>
+        <p> If a user has a language preference they may choose to provide an ordered list of prefered languages with the read request. This is encoded in the Accept-Language http header. It's up to the server to determine what language a document should be served in given any language preference string. </p>
+
+        <h3> 2.2 Authentication/authorization </h3>
+        <p> Authentication and authorization is done with client certificates. https supports sending requests with an X.509 client certificate. </p>
+        <p> Software support for this feature is surprisingly good but documentation is not. This is an attempt to make it slightly less hard to agree on how to use this feature. </p>
+        <p> Client certificates MUST be self signed. It's best to only use a client certificate if it's actually necessary. It's also best to use a different certificate for each domain. </p> 
+        <p> If a resource requires a certificate and one hasnt been provided the server should respond with a 401 status code </p>
+        <p> If a resource is requested with an unauthorized certificate the server should respond with a 403 status code </p>
+        <p> These OpenSSL commands can be used to generate a client certificate for use with ATHN: </p>
+        <pre>openssl req -x509 -newkey rsa:4096 -subj "/" -keyout client_key.pem -out client_cert.pem -days 365
+openssl pkcs12 -export -in client_cert.pem -inkey client_key.pem -out client_certificate.p12</pre>
+
+        <h4> Deprecation warning </h4>
+        <p> If you plan on using client certificates for anything serious that you dont want to risk losing access to you should have a way to migrate your certificates to another standard. When this specification is deprecated it's quite unlikely that your existing X.509 certificates will be compatible with whatever we end up using for the real specifications. </p>
+
+        <h3> 2.3 Server certificate validation </h3>
+        <p> There are 2 ways to validate server certificates: Trust On First Use and no validation. </p>
+        <p> From a security standpoint this is not the best. But this specification is for testing purposes and this allows the use of self signed server certificates, which is much easier to deal with. </p>
+
+
+        <h2> 3 Write requests </h2>
+        <p> A client can send a write request to ask a server to do some action by issuing an https POST request. A write request contains 3 pieces of information. </p>
+        <ol>
+            <li> The url </li>
+            <li> <b>Optionally:</b> Form data </li>
+            <li> <b>Optionally:</b> A client certificate (handled in exactly the same way as with read requests) </li>
+        </ol>
+        <p> Here is a curl command that shows how to properly send an ATHN write request. </p>
+        <pre>curl -k --cert cert.p12 --cert-type p12 -X POST -d data.json https://&ltURL&gt</pre>
+
+        <h3> 3.1 The form data json encoding </h3>
+        <p> A write request can be sent with form data. The form data is encoded in the following json format. </p>
+        <p> The entire form data is an object with keys of the same name as the IDs of the form fields in the form. </p>
+        <p> Each input is an object with the keys:  </p>
+        <ul>
+            <li> type: String (can only have the same values as the form field types specified in the ATHN markup language specification) </li>
+            <li> optional: Boolean </li>
+            <li> empty: Boolean or null </li>
+            <li> value: the same as the input's type or null </li>
+        </ul>
+        <p> If optional is false, empty should be null, although it should never be read in that case. If optional and empty are both true, value should be null, although it should never be read in that case.  </p>
+        <p> Lists can contain multiple children. The value field of a list type input is a list of form data json objects. Even if the list only has 1 child. </p>
+        <p> Here is an example of a json encoded form data object: </p>
+        <pre>
+{
+    "username": {
+        "type": "string",
+        "optional": false,
+        "empty": null,
+        "value": "Example user"
+    },
+    "age": {
+        "type": "int",
+        "optional": false,
+        "empty": null,
+        "value": 18
+    },
+    "gender": {
+        "type": "string",
+        "optional": true,
+        "empty": true,
+        "value": null
+    },
+    "interests": {
+        "type": "list",
+        "optional": true,
+        "empty": false,
+        "value": [
+            {
+                "interest": {
+                    "type": "string",
+                    "optional": false,
+                    "empty": null,
+                    "value": "Computer science"
+                },
+                "weight": {
+                    "type": "float",
+                    "optional": true,
+                    "empty": false,
+                    "value": 0.8
+                }
+            },
+            {
+                "interest": {
+                    "type": "string",
+                    "optional": false,
+                    "empty": null,
+                    "value": "Politics"
+                },
+                "weight": {
+                    "type": "float",
+                    "optional": true,
+                    "empty": true,
+                    "value": null
+                }
+            }
+        ]
+    }
+}</pre>
+
+        <h3> 3.2 Write responses </h3>
+        <p> If the write request is successful the server responds with an acknowledgement (A success status code) and optionally an ATHN document. This is the document that will be redirected to if the redirect property was applied to the submit button. </p>
+        <h4> Server side form validation </h4>
+        <p> The basic validation provided by form fields arent always enough, sometimes a form field needs to fulfill certain criteria that a client cant check. This is the purpose of server side form validation. </p>
+        <p> If the server deems a form field invalid it can send back a response with a 418 status code and a list of form validation error json objects.</p>
+        <p> The form validation error json object contains the following keys: </p>
+        <ul>
+            <li> id: String </li>
+            <li> message: String </li>
+            <li> idx: Number or null </li>
+        </ul>
+        <p> The id key is the ID of the erroneous form field </p>
+        <p> The message key contains the error message, the error message should be shown to the human. It is written in plain human language and has no meaning for a machine. More advanced "APIs" can choose to start each possible error message with a number (error code) to make the error message machine readable, this is something that's done on an endpoint to endpoint basis and it's up to the administrator of the server to document them. </p>
+        <p> The idx (index) key is only used if the erroneous form field is a child of a list field, otherwise it's null. Since a list of inputs contains duplicate ids this index number is needed to specify which one of the inputs with that id is erroneous. idx is zero based. It's not necessary to specify the parent list field because no 2 different form fields in a single form are allowed to have the same ID. </p>
+        <p> Here is an example of the data of an unsuccessful write response: </p>
+        <pre>
+[
+    {
+        "id": "username",
+        "message": "The username is already taken",
+        "idx": null
+    },
+    {
+        "id": "interest",
+        "message": "This site is strictly non political, discuss your political opinions elsewhere",
+        "idx": 1
+    }
+]</pre>
+
+
+        <h2> Appendix: Design decisions that need to be discussed </h2>
+        <ul>
+            <li> What do we do instead of https? </li>
+        </ul>
+    </body>
+</html>

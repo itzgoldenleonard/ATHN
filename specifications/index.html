@@ -13,6 +13,110 @@
         <p> Project ATHN will probably be made up of several standards made to come together to provide the full experience. Right now only one of them are being worked on. Here is a list of all of the standards that make up project ATHN with links to their specifications </p>
         <ul>
             <li><a href="markup.html">ATHN markup language</a></li>
+            <li><a href="https.html">ATHN over https</a></li>
         </ul>
+
+        <h1 id="title"> Terminology </h1>
+        <p> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in these documents are to be interpreted as described in BCP14. </p>
+        <p> Here are some terms that are used in the specifications and precisely what they mean </p>
+        <dl>
+            <h2> Document </h2>
+            <dt> The ATHN system </dt>
+            <dd> The specifications on this page </dd>
+
+            <dt> ATHN document </dt>
+            <dd> A file written in the ATHN markup language. It consists of a number of (mostly) indepedent lines </dd>
+
+            <dt> Line type </dt>
+            <dd> Every line in an ATHN document has a line type </dd>
+
+            <dt> LTI (line type identifier) </dt>
+            <dd> The first 3 bytes of a line, which identify the line type of that line </dd>
+
+            <dt> Section </dt>
+            <dd> There are a few sections in an ATHN document which have different rules and can be switched between with a section line </dd>
+
+            <h3> Forms </h3>
+            <dt> Form field </dt>
+            <dd> A line type with the LTI: ???, also refers to the object that is rendered by the client. A form field has:
+                <ul>
+                    <li> An ID </li>
+                    <li> A form field type </li>
+                    <li> An input </li>
+                    <li> A number of properties </li>
+                </ul>
+            </dd>
+
+            <dt> Input </dt>
+            <dd> The data the user inputs into the form field. It consists of: 
+                <ul>
+                    <li> An input type </li>
+                    <p> The type of data that the input value has, the same as the form field type </p>
+                    <li> An input value </li>
+                    <p> The actual value that's been inputted </p>
+                </ul>
+            </dd>
+
+            <dt> Property </dt>
+            <dd> A rule stating something about a form field. Properties are written by the author in the document. They consist of:
+                <ul>
+                    <li> A property name </li>
+                    <p> States what the property means </p>
+                    <li> A property type </li>
+                    <p> The data type of the property value, this depends on the property name </p>
+                    <li> A property value </li>
+                    <p> The value of the property, this is written by the author </p>
+                </ul>
+            </dd>
+
+            <dt> Form data </dt>
+            <dd> A data structure containing the inputs of all form fields in a form </dd>
+
+            <dt> Submit </dt>
+            <dd> The act of sending a write request with the data of a form </dd>
+
+
+            <h2> Software </h2>
+            <dt> ATHN client </dt>
+            <dd> A piece of software that processes ATHN documents. They usually also send requests. </dd>
+
+            <dt> Automated client </dt>
+            <dd> A client that's only operated by non human users </dd>
+
+            <dt> Document validator client </dt>
+            <dd> A client whose purpose is to validate ATHN documents and nothing else </dd>
+
+            <dt> Server </dt>
+            <dd> A piece of software that responds to ATHN requests </dd>
+
+            <h2> Network </h2>
+            <dt> User </dt>
+            <dd> An entity that uses a client to interact with documents. Can be human or non human </dd>
+
+            <dt> Author </dt>
+            <dd> A person who authors a document, or writes a piece of software that generates documents, ie. hosts a site. </dd>
+
+            <dt> Request </dt>
+            <dd> A client sends requests to a server. There are 2 types of requests: </dd>
+
+            <dt> Read request </dt>
+            <dd> Is sent to request an ATHN document </dd>
+
+            <dt> Write request </dt>
+            <dd> Is sent with (or without) form data to request some action </dd>
+
+            <dt> Response </dt>
+            <dd> A server sends a response back to the client when it recieves a request. </dd>
+
+            <dt> Read response </dt>
+            <dd> A response to a read request, contains an ATHN document </dd>
+
+            <dt> Write response </dt>
+            <dd> A response to a write request </dd>
+
+            <dt> Transaction </dt>
+            <dd> One request followed by one response. You can have read transactions and write transactions </dd>
+
+        </dl>
     </body>
 </html>

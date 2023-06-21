@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+    <head>The weight 
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="light dark" />
@@ -9,28 +9,24 @@
     </head>
     <body>
         <h1 id="title"> ATHN markup language specification </h1>
-        <p> Version: 0.1.4 (alpha) </p>
+        <p> Version: 0.1.5 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
         <h2> Introduction </h2>
         <p> ATHN markup language is the backbone of the project, it's the plain text format that makes up every ATHN site. It's intended to be as protocol agnostic as reasonable. Right now https is used to exchange the markup files, but in theory any other protocol, maybe even a custom one specifically tailored to the needs of this project, could be used for that purpose. </p>
         <p> Generally complexity is put on the client software, making the server software simpler to ease site development</p>
-        <h2> 1 Terminology </h2>
-        <p> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP14. </p>
-        <p> A client is any software that recieves an ATHN markup document </p>
-        <p> A server is any software that sends ATHN markup documents </p>
         <p> Whenever an example of a keyword is given in this specification it's case sensitive unless otherwise noted and has the bytes that make it up written in paretheses next to it. The bytes MUST match exactly, whitespace characters are not ignored.</p>
 
 
-        <h2> 2 Line types </h2>
+        <h2> 1 Line types </h2>
         <p> An ATHN markup document can be analyzed line by line. Each line, except text lines, start with a 3 byte <em>line type identifier (LTI)</em> followed by the content of the line. Every line type has a unique LTI so that the type of any line can be determined unambiguously by knowing the section of the line and inspecting its first 3 bytes. If the first 3 bytes dont match any valid LTI, the line is considered a text line. Each line type has its own rules about how it should be processed, and not all of them should be presented to humans. Blank lines are ignored.</p>
 
-        <h3> 2.1 Text lines </h3>
+        <h3> 1.1 Text lines </h3>
         <p> As the name suggests text lines just contain plain text. Text lines are rendered as is. But they have one special feature: formatting </p>
         <p> Available in: 'Main', 'Footer' and 'Form'</p>
         <p> If the line type cannot be determined to be something else it's a text line. </p>
-        <h4> 2.1.1 Text line formatting </h4>
+        <h4> 1.1.1 Text line formatting </h4>
         <p> Text lines can contain a few special formatting character sequences. They should not be rendered, but MAY be ignored. When the line ends all formatting is implicitly reset. The special sequences are as follows: </p>
         <p> <kbd>\r</kbd> (0x5c 0x72) </p>
         <p> Resets all formatting </p>
@@ -42,7 +38,7 @@
         <p> Enables monospaced formatting </p>
         <p> On the rare occation that you do need to write any of the control sequences in a text line you can write it like this <kbd>\​b</kbd> (0x5c 0xe2 0x80 0x8b 0x62) with a zero width space or similar in between the backslash character and the letter </p>
 
-        <h3> 2.2 Section lines </h3>
+        <h3> 1.2 Section lines </h3>
         <p> Section lines MUST NOT be rendered. Section lines change the section of every following line (until a new section line is encountered). The section starts off as 'Meta' on the first line of any document. Any of the other sections can occur on any line after the 'Meta' section.</p>
         <p> LTI: <kbd>+++</kbd> (0x2d 0x2d 0x2d)</p>
         <p> The content of a section line is only valid if it is one of the following:</p>
@@ -55,37 +51,37 @@
         <p> <kbd> Form</kbd> (0x20 0x46 0x6f 0x72 0x6d) </p>
         <p> Changes the section to 'Form'. Is optional and allowed any number of times per document. </p>
 
-        <h3> 2.3 Metadata tag lines </h3>
+        <h3> 1.3 Metadata tag lines </h3>
         <p> Metadata tag lines is a collection of line types, used for metadata, each type of metadata tag line is called a tag. Some tags can occur more than once, their order matters and MUST be preserved unless otherwise noted. </p>
         <p> Available in: 'Meta'. In fact they are the only permitted line type in the 'Meta' section. </p> 
         <p> LTI: A letter referring to the tag name, followed by an <kbd>M</kbd> (0x4d) character, followed by a space (0x20) character. </p>
         <p> These are the valid metadata tags and their rules, they MUST occur in this order in the document:</p>
-        <h4> 2.3.1 Title tag </h4>
+        <h4> 1.3.1 Title tag </h4>
         <p> <kbd>TM </kbd> (0x54 0x4d 0x20) </p>
         <p> The title tag is REQUIRED, it can only occur once, maximum size is 2048 bytes. It SHOULD be shown to the human, typically in a big font at the top of the site, but can usually just be ignored by automatic clients. </p>
-        <h4> 2.3.2 Subtitle tag </h4>
+        <h4> 1.3.2 Subtitle tag </h4>
         <p> <kbd>SM </kbd> (0x53 0x4d 0x20) </p>
         <p> The subtitle tag can only occur once, the maximum size is 16384 bytes. It SHOULD be shown to the human.</p>
-        <h4> 2.3.3 Author tag </h4>
+        <h4> 1.3.3 Author tag </h4>
         <p> <kbd>AM </kbd> (0x41 0x4d 0x20) </p>
         <p> The author tag can occur up to 16 times. Maximum size is 1024 bytes. </p>
-        <h4> 2.3.5 Language tag </h4>
+        <h4> 1.3.5 Language tag </h4>
         <p> <kbd>LM </kbd> (0x4c 0x41 0x20) </p>
         <p> The first occurence of the language tag tells the client what language the current document is (primarily) written in. All subsequent occurences mean that the document is also available in that language. Can occur up to 256 times. The content of the tag is a language string as defined in BCP47. It's important that the first occurence comes first, but the order of the rest is not important.</p>
-        <h4> 2.3.4 License (usage _Rights) tag </h4>
+        <h4> 1.3.4 License (usage _Rights) tag </h4>
         <p> <kbd>RM </kbd> (0x4c 0x4d 0x20) </p>
         <p> The license tag specifies what license the whole document is under, it applies to the whole document. It can be any identifier in the SPDX license list or a URL to a custom license. It can occur up to 4 times. The maximum size is 2048 bytes.</p>
-        <h4> 2.3.6 Cache duration tag</h4>
+        <h4> 1.3.6 Cache duration tag</h4>
         <p> <kbd>CM </kbd> (0x43 0x4d 0x20) </p>
         <p> The cache duration tag is an unsigned 32 bit integer, it can only occur once. It is the number of seconds that the page should be cached by clients that support caching. The special value of 0 is used for an infinite cache time.</p>
 
-        <h3> 2.4 Link lines </h3>
+        <h3> 1.4 Link lines </h3>
         <p> Link lines are used to redirect to any other document or file of any sort. Link lines are the primary (only) way to have images, video, other multimedia, tables and anything else not supported by ATHN markup in an ATHN markup document. They are of course also used to link to other ATHN documents. They are typically underlined, colored or have some other formatting that indicates that they're interactive. When activated by a human the link SHOULD open in their prefered app, the exception being other ATHN documents which MAY be opened/redirected to in the client app. </p>
         <p> Available in: 'Main', 'Header', 'Footer' and 'Form'. They are the only allowed line type in the 'Header' section. </p>
         <p> LTI: <kbd>@@@</kbd> (0x40 0x40 0x40) </p>
         <p> The content of a link line always starts with a URL (absolute or relative) with spaces and other reserved characters percent-encoded as per RFC 3986. Optionally followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter, followed by a label. When no label is specified, the url is shown, otherwise only the label is shown. If a label is present the client MAY still show the url to the human upon request. </p>
 
-        <h3> 2.5 Preformatted lines </h3>
+        <h3> 1.5 Preformatted lines </h3>
         <p> Preformatted lines are rendered in a monospaced font with unaltered whitespace. Preformatted lines SHOULD NOT be wrapped. Preformatted lines are used for things like source code, terminal outputs, ASCII art or anything else where it's important to preserve whitespacing or use a fixed width font. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: <kbd>;;;</kbd> (0x3b 0x3b 0x3b) </p>
@@ -93,17 +89,17 @@
         <h4> 2.5.1 Code blocks </h4>
         <p> Advanced clients MAY choose to render continous sequences of preformatted lines into a single "code" block. If they do that they MUST not differentiate between the 2 different types of preformatted lines. </p>
         <p> If an author makes a code block containing for example ASCII art, they can chose to start the block with a line beginning with <kbd>'''</kbd> and containing a title which would be read aloud by the screen reader. Then make the rest of the block's lines start with <kbd>;;;</kbd> which would, correctly, not be read by the screen reader since it isnt text. </p>
-        <h4> 2.5.2 Source code highlighting </h4>
+        <h4> 1.5.2 Source code highlighting </h4>
         <p> It would be unreasonable to assume of clients that they can correctly highlight source code of any kind. If you want source code to be highlighted you can use ASCII control codes to do the highlighting, but dont expect all clients to show the highlighting. This has the benefit that you can be sure that your source code is always correctly highlighted (if the client supports it). With the drawback that it's more difficult for you to write it. Another drawback is that the client wont get to apply its own color scheme. </p> 
         <p> The reasoning behind this decision is that if there's one thing that's worse than unhighlighted source code, it's incorrectly highligted source code, and you cant expect clients to know every code language in the world. </p>
 
-        <h3> 2.6 Separator </h3>
+        <h3> 1.6 Separator lines </h3>
         <p> The separator line type is used to separate paragraphs, code blocks or in other circumstances where you might otherwise use a blank line. Since blank lines are ignored and using text lines containing nothing but whitespace is hacky. Separator lines are rendered as a horizontal line, extra spacing or something similar. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: <kbd>===</kbd> (0x3d 0x3d 0x3d) </p>
         <p> Separator lines MUST NOT contain any content </p>
 
-        <h3> 2.7 Unordered list lines </h3>
+        <h3> 1.7 Unordered list lines </h3>
         <p> Unordered list lines are lines rendered starting with a bullet (the specific symbol is up to the client and could differ depending on the level of indentation) and indented to indicate that it's part of a list. Unordered lists support 6 levels of indentation. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: a number corresponding to the level of indentation followed by a <kbd>-</kbd> (0x2d) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
@@ -115,7 +111,7 @@
         <p> <kbd>6- </kbd> (0x36 0x2d 0x20): Unordered list line indented by 6</p>
         <p> The content of an unordered list line can be anything </p>
 
-        <h3> 2.8 Ordered list lines </h3>
+        <h3> 1.8 Ordered list lines </h3>
         <p> Ordered list lines are identical to unordered list lines except the author gets to choose the bullet. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: a number corresponding to the level of indentation followed by a <kbd>*</kbd> (0x2a) character followed by a space character. That makes the following LTIs specify unordered list lines:</p>
@@ -126,16 +122,16 @@
         <p> <kbd>5* </kbd> (0x35 0x2a 0x20): Ordered list line indented by 5</p>
         <p> <kbd>6* </kbd> (0x36 0x2a 0x20): Ordered list line indented by 6</p>
         <p> The content of an ordered list line starts with the bullet symbol(s) followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter followed by the content of the list item </p>
-        <h4> 2.8.1 Considerations about custom bullets </h4>
+        <h4> 1.8.1 Considerations about custom bullets </h4>
         <p> Requiring the author to number the list items themselves is a bit more difficult on the author. But it does also provide a lot of flexibility in terms of how you choose to number them. You could number them with numbers, letters, roman numerals or not number them at all but just use a special bullet symbol (this would be how you do checklists). It also allows you to stick a text line in between 2 list items in an ordered list without breaking the numbering flow. </p>
 
-        <h3> 2.9 Dropdown lines </h3>
+        <h3> 1.9 Dropdown lines </h3>
         <p> A dropdown is used to hide a long and not neccesary to read paragraph behind a shorter label. Only the label is shown until the human requests to see the hidden content of the dropdown line. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: <kbd>...</kbd> (0x2e 0x2e 0x2e) </p>
         <p> Dropdown lines start with the label followed by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter, followed by the hidden content </p>
 
-        <h3> 2.10 Admonition lines </h3>
+        <h3> 1.10 Admonition lines </h3>
         <p> Admonitions are callout boxes that directs your attention to warnings, notes, tips etc. They're often used in software documentation. ATHN markup has 3 types of admonitions used to convey different levels of importance.</p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTIs: </p>
@@ -144,7 +140,7 @@
         <p> <kbd>!! </kbd> (0x21 0x21 0x20): Danger admonition. Is the single most important piece of information in the entire document and needs strong emphasis. It's recommended not to have more than one of these in each document. </p>
         <p> The content of an admonition line can be anything</p>
 
-        <h3> 2.11 Heading lines </h3>
+        <h3> 1.11 Heading lines </h3>
         <p> There are 6 levels of heading lines. They are typically rendered in a bigger and differently weighted font than text lines. Simple clients MAY choose to treat them identically to text lines (with the LTI shown to the human). Headings do not support formatting, only text lines do. Conventionally the title metadata tag is used as the title of the page, not a level 1 heading. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: a number corresponding to the level of the heading, followed by a <kbd>#</kbd> (0x23) character, followed by a space (0x20) character. That makes the following LTIs specify heading lines: </p>
@@ -156,13 +152,13 @@
         <p> <kbd>6# </kbd> (0x36 0x23 0x20): Level 6 heading line</p>
         <p> The content of a heading line can be anything </p>
 
-        <h3> 2.12 Quote lines </h3>
+        <h3> 1.12 Quote lines </h3>
         <p> Quote lines are used for quotes. They are usually formatted in a certain way to indicate that the line is a quote, or might just by wrapped in quotation marks. Simple clients MAY choose to treat quote lines identically to text lines. Multiline quotes are not supported. </p>
         <p> Available in: 'Main' and 'Form' </p>
         <p> LTI: <kbd>///</kbd> (0x2f 0x2f 0x2f) </p>
         <p> The content of quote lines can be anything </p>
 
-        <h3> 2.13 A note on LTI patterns </h3>
+        <h3> 1.13 A note on LTI patterns </h3>
         <p> All 35 LTIs have been selected carefully to follow specific patterns, whose purpose is to make it easer to parse (mostly for machines). They all fall into one of these two catergories: </p>
         <ol>
             <li> There is only 1 sub type for the line type that corresponds to the LTI </li>
@@ -173,7 +169,7 @@
         <p> Also, there are 3 line types where the content consists of 2 parts separated by the <kbd> | </kbd> (0x20 0x7c 0x20) delimiter. The second character in the LTI of those line types has an ASCII code that's divisible by 2 (which none of the others are). </p>
 
 
-        <h2> 3 Section rules </h2>
+        <h2> 2 Section rules </h2>
         <h3> The 'Main' section</h3>
         <p> The 'Main' section contains the primary content of the page and MUST be presented to the human at all times in an appropriate manner. </p>
         <h3> The 'Header' section</h3>
@@ -182,53 +178,53 @@
         <p> The 'Footer' section is typically located at the bottom of the page and can contain link lines and regular text lines. It's typically used for persistent information about the page or site that isnt handled my the 'Meta' section. It could for example link to a privacy policy, or explain briefly what the company behind a site does. It isnt very important and doesnt need to be presented prominently to the human, but could be of interest and should be viewable. </p>
 
 
-        <h2> 4 Forms </h2>
+        <h2> 3 Forms </h2>
         <p> The 'Form' section behaves much like the 'Main' section. You can have several form sections in one document. A 'Form' section has all the same line types as the 'Main' section, and they're all rendered in the same way. The difference is that it has one additional line type available: the form field line. </p>
-        <p> A form field collects user input. All form field lines in a single 'Form' section are grouped together. All 'Form' sections MUST have a submit field, that when activated, if all fields are validly filled, sends the input of all of the fields in the 'Form' section to a specified server. The specifics of how such a form response is sent and encoded depend on the protocol used, see the companion specification for the protocol for that. </p>
-        <p> The fields of different types should be presented as interactive elements that make sense to choose that type of data. For example the date type could have a calendar picker and the string type a text field. </p>
-        <p> Clients SHOULD save the input in forms until the form response has been successfully sent or the user decides to clear it. That means that if the user partially fills out a form, then leaves the page to come back to it later, the input should still be filled into the form. It also means that if the form response is sent unsuccessfully, whether that's because the client fails to send it or because the server reports an error in the response, the input in the form should not be cleared but saved. </p>
+        <p> A form field collects user input. All form field lines in a single 'Form' section are grouped together. All 'Form' sections MUST have a submit field, that when activated, if all fields are validly filled, sends the input of all of the fields in the 'Form' section to a specified server. The specifics of how such a write request is sent and encoded depends on the protocol used, see the companion specification for the protocol for that. </p>
+        <p> The fields of different types should be presented as interactive elements that make sense to choose that type of data. For example the date type could have a calendar picker and the string type a text box. </p>
+        <p> Clients SHOULD save the inputs in forms until the form data has been successfully sent or the user decides to clear it. That means that if the user partially fills out a form, then leaves the page to come back to it later, the input should still be filled into the form. It also means that if the form data is sent unsuccessfully, whether that's because the client fails to send it or because the server reports an error in the response, the input in the form should not be cleared but saved. </p>
 
-        <h3> 4.1 Form field lines </h3>
+        <h3> 3.1 Form field lines </h3>
         <p> Available in: 'Form'</p>
         <p> LTI: <kbd>???</kbd> (0x3f 0x3f 0x3f) </p>
         <p> The content of a form field line goes like this: </p> 
         <ol>
             <li> The ID of the field, this can consist of the ASCII letters <kbd>a</kbd>-<kbd>z</kbd> (0x61-0x7a), <kbd>A</kbd>-<kbd>Z</kbd> (0x41-0x5a) and the <kbd>_</kbd> (0x5f) character. Snake case is recommended. </li>
             <li> The <kbd>:</kbd> (0x3a) character </li>
-            <li> The name of the type of the field, see section 4.2 for a list </li>
+            <li> The name of the type of the field, see section 3.2 for a list </li>
             <li> Any number of properties. Properties are specified in a way similar to command line arguments. Like this: </li>
             <ol>
                 <li> The <kbd> \</kbd> (0x20 0x5c) characters. </li>
-                <li> The name of the property, the valid property names will depend on the type of the field and can also be seen in section 4.2. </li>
+                <li> The name of the property, the valid property names will depend on the type of the field and can also be seen in section 3.2. </li>
                 <li> A space (0x20) character </li>
-                <li> The value of the property. The property value continues until a new property is encountered or the line ends. Some properties are boolean and have a default behavior that can be overridden by just applying the property to a field, they therefore dont have any value. The expected type of the value is written in the definitions of the properties. </li>
+                <li> The value of the property. The property value continues until a new property is encountered or the line ends. Some properties are boolean and have a default behavior that can be overridden by just applying the property to a field, they therefore dont have any value. The expected property type is written in the definitions of the properties. </li>
             </ol>
         </ol>
         <p> Here is an example of a correctly formatted form field </p>
         <pre>???password:string \secret \min 12 \max 64 \label Choose your password</pre>
 
-        <h3> 4.2 Form field types </h3>
+        <h3> 3.2 Form field types </h3>
 
-        <h4> 4.2.1 Global properties </h4>
+        <h4> 3.2.1 Global properties </h4>
         <p> These properties can be used on all (except when noted) form field types. </p>
         <ul>
             <li> <kbd>optional</kbd>  <b>boolean</b> (0x6f 0x70 0x74 0x69 0x6f 0x6e 0x61 0x6c): All form fields are by default required, if this property is applied to a field it is marked as optional. Is not applicable to the submit type. </li>
             <li> <kbd>label</kbd> <b>(UTF-8) string</b> (0x6c 0x61 0x62 0x65 0x6c): If this property is not applied, the label of the field will be its ID. This property can be used to change the label to anything you like (as long as it doesnt contain <kbd> \</kbd> as that would start a new property). Also applies to the submit type. </li>
             <li> <kbd>default</kbd> <b>input</b> (0x64 0x65 0x66 0x61 0x75 0x6c 0x74): Set a default value for the field. Can be used both on optional and required fields. Is not applicable to the submit type or the file type. </li>
-            <li> <kbd>conditional</kbd> <b>ID</b> (0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of a target field. Make the field this property is applied to conditionally available depending on whether the target field is valid. Any field with this property MUST be optional. The field is not shown to the human unless the target field has a valid value or if the target field is true (only applies to booleans). Cant be combined with the !c property.</li>
-            <li> <kbd>!conditional</kbd> <b>ID</b> (0x21 0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of a target field. Make the field this property is applied to conditionally available depending on whether the target field is empty. Any field with this property MUST be optional. The field is not shown to the human unless the target field is empty or if the target field is false (only applies to booleans). Cant be combined with the c property.</li>
+            <li> <kbd>conditional</kbd> <b>ID</b> (0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of a target field. Make the field this property is applied to conditionally available depending on whether the target field is valid. Any field with this property MUST be optional. The field is not shown to the human unless the target field has a valid value or if the target field is true (only applies to boolean fields). Cant be combined with the !c property.</li>
+            <li> <kbd>!conditional</kbd> <b>ID</b> (0x21 0x63 0x6f 0x6e 0x64 0x69 0x74 0x69 0x6f 0x6e 0x61 0x6c): The value of this property is the ID of a target field. Make the field this property is applied to conditionally available depending on whether the target field is empty. Any field with this property MUST be optional. The field is not shown to the human unless the target field is empty or if the target field is false (only applies to boolean fields). Cant be combined with the c property.</li>
         </ul>
 
-        <h4> 4.2.2 The submit type </h4>
+        <h4> 3.2.2 The submit type </h4>
         <p> Type name: <kbd>submit</kbd> (0x73 0x75 0x62 0x6d 0x69 0x74) </p>
-        <p> This is the special submit type, it is the only type that doesnt take any input. Instead it behaves like a button and can only be used once per 'Form' section. When activated it verifies that all of the form fields in the 'Form' section that it's in are validly filled out. If they're not it will refuse to submit, notifying the user of the error. If they are valid it will submit the form response, this process depends on what protocol is used. The ID of the submit button is only used to set its default label, it doesnt matter otherwise. </p>
+        <p> This is the special submit type, it is the only type that doesnt take any input. Instead it behaves like a button and can only be used once per 'Form' section. When activated it verifies that all of the form fields in the 'Form' section that it's in are validly filled out. If they're not it will refuse to submit, notifying the user of the error. If they are valid it will submit the form data, this process depends on what protocol is used. The ID of the submit button is only used to set its default label, it doesnt matter otherwise. </p>
         <p> Valid properties: </p>
         <ul>
-            <li> <kbd>destination</kbd> <b>URL</b> (0x64 0x65 0x73 0x74 0x69 0x6e 0x61 0x74 0x69 0x6f 0x6e): A url, absolute or relative with spaces and other reserved characters percent-encoded as per RFC 3986. This is the url that the form response should be sent to. This is the only REQUIRED property for this type. </li>
-            <li> <kbd>redirect</kbd> <b>boolean</b> (0x72 0x65 0x64 0x69 0x72 0x65 0x63 0x74): When applied it will instruct the client to redirect to the document sent back by the server upon a successful form response (protocol specific implementation). Does not redirect on an unsuccessful response. </li>
+            <li> <kbd>destination</kbd> <b>URL</b> (0x64 0x65 0x73 0x74 0x69 0x6e 0x61 0x74 0x69 0x6f 0x6e): A url, absolute or relative with spaces and other reserved characters percent-encoded as per RFC 3986. This is the url that the write request should be sent to. This is the only REQUIRED property for this type. </li>
+            <li> <kbd>redirect</kbd> <b>boolean</b> (0x72 0x65 0x64 0x69 0x72 0x65 0x63 0x74): When applied it will instruct the client to redirect to the document sent back by the server upon a successful write request (protocol specific implementation). Does not redirect on an unsuccessful response. </li>
         </ul>
 
-        <h4> 4.2.3 The string type </h4>
+        <h4> 3.2.3 The string type </h4>
         <p> Type name: <kbd>string</kbd> (0x73 0x74 0x72 0x69 0x6e 0x67) </p>
         <p> Input type: string </p>
         <p> The string type contains a string of UTF-8 characters. By default only a single line is allowed. It's very generic so it has quite a few options to narrow its meaning down. </p>
@@ -241,7 +237,7 @@
             <li> <kbd>variant</kbd> <b>list of input</b> (0x76 0x61 0x72 0x69 0x61 0x6e 0x74): Contains a valid value for the text field. You can have an arbitrary number of these properties for one text field to give it an arbitrary number of valid values. A string field that has 1 or more enumeration variants is only valid if the input matches one of the enumeration variants exactly, this feature is used where radio buttons would be in HTML. </li>
         </ul>
 
-        <h4> 4.2.4 The integer type </h4>
+        <h4> 3.2.4 The integer type </h4>
         <p> Type name: <kbd>int</kbd> (0x69 0x6e 0x74) </p>
         <p> Input type: 64bit signed integer </p>
         <p> The integer type represents a whole number. </p>
@@ -253,7 +249,7 @@
             <li> <kbd>positive</kbd> <b>boolean</b> (0x70 0x6f 0x73 0x69 0x74 0x69 0x76 0x65): Only allow positive numbers </li>
         </ul>
 
-        <h4> 4.2.5 The floating point number type </h4>
+        <h4> 3.2.5 The floating point number type </h4>
         <p> Type name: <kbd>float</kbd> (0x66 0x6c 0x6f 0x61 0x74) </p>
         <p> Input type: IEEE 754 double precision floating point (binary64) number </p>
         <p> The floating point number type represents (almost) any number. </p>
@@ -265,13 +261,13 @@
             <li> <kbd>positive</kbd> <b>boolean</b> (0x70 0x6f 0x73 0x69 0x74 0x69 0x76 0x65): Only allow positive numbers </li>
         </ul>
 
-        <h4> 4.2.6 The boolean type </h4>
+        <h4> 3.2.6 The boolean type </h4>
         <p> Type name: <kbd>bool</kbd> (0x62 0x6f 0x6f 0x6c) </p>
         <p> Input type: boolean </p>
         <p> A boolean is either true or false. If the boolean is optional it can also be undecided. Optional booleans SHOULD have some way to be reset back to the undecided state. If a default value hasnt been specified with the default property the boolean field defaults to false if the field is required and undecided if the field is optional. </p>
         <p> Valid properties: Only the global properties. Default property can have the values <kbd>true</kbd> (0x74 0x72 0x75 0x65) or <kbd>false</kbd> (0x66 0x61 0x6c 0x73 0x65) </p>
 
-        <h4> 4.2.7 The file (binary) type </h4>
+        <h4> 3.2.7 The file (binary) type </h4>
         <p> Type name: <kbd>file</kbd> (0x66 0x69 0x6c 0x65) </p>
         <p> Input type: arbitrary binary data </p>
         <p> Allows a file (including binary files) to be uploaded. </p>
@@ -282,7 +278,7 @@
         </ul>
         <em>Remember: The file type doesnt support the default property</em>
 
-        <h4> 4.2.8 The list type </h4>
+        <h4> 3.2.8 The list type </h4>
         <p> Type name: <kbd>list</kbd> (0x6c 0x69 0x73 0x74) </p>
         <p> Input type: (non zero) unsigned int* (the list field doesnt technically take any input)</p>
         <p> The list type is a bit special because it doesnt contain any value in itself. Instead it has a number of child fields that contain the actual values. It can contain any number of elements which each has a value for each child element, like an array or vector in most programming languages. Clients should somehow indicate that the child fields are related to each other and to the list, they should also let the user create and remove elements from the list. </p>
@@ -295,7 +291,7 @@
         </ul>
         <p> <b>Note: </b>This is the only case where the document flow can be broken, meaning that the order of the lines in the source document doesnt correspond to the order in the rendered document. That might become a problem, but it's currently unsolved. For now the best thing to do is to always put child fields on the line immedeatly after their parent field. </p>
 
-        <h4> 4.2.9 The date type </h4>
+        <h4> 3.2.9 The date type </h4>
         <p> Type name: <kbd>date</kbd> (0x64 0x61 0x74 0x65) </p>
         <p> Input type: RFC 3339 formatted timestamp where the timezone is always UTC. The special value <kbd>now</kbd> (0x6e 0x6f 0x77) refers to the time of filling out the form field. </p>
         <p> The date type represents a specific point in time. The actual value is always in UTC but it should be presented to the human in local time. </p>
@@ -307,13 +303,13 @@
             <li> <kbd>date</kbd> <b>boolean</b> (0x64 0x61 0x74 0x65): Boolean property. Only use the date part and dont allow any time of day to be entered. Cant be combined with the time property. </li>
         </ul>
 
-        <h4> 4.2.10 The email address type </h4>
+        <h4> 3.2.10 The email address type </h4>
         <p> Type name: <kbd>email</kbd> (0x65 0x6d 0x61 0x69 0x6c) </p>
         <p> Input type: An email address </p>
         <p> The email type represents an email address. </p>
         <p> Valid properties: Only the global properties. </p>
 
-        <h4> 4.2.11 The phone number type </h4>
+        <h4> 3.2.11 The phone number type </h4>
         <p> Type name: <kbd>tel</kbd> (0x74 0x65 0x6c) </p>
         <p> Input type: International ITU-T E.164 formatted phone number </p>
         <p> The phone number type represents a phone number. Like with the date, the phone number MAY be presented to the human, and the human MAY input the phone number in another format, in which case the client would have to convert it to E.164 prior to sending it. </p>
@@ -323,14 +319,14 @@
         </ul>
 
 
-        <h2> 5 Uncompliant document behavior </h2>
+        <h2> 4 Uncompliant document behavior </h2>
 
-        <h3> 5.1 Client behavior </h3>
+        <h3> 4.1 Client behavior </h3>
         <p> A client MUST be able to parse a fully compliant ATHN markup document correctly. However, some of the things that might make a document uncompliant might not cause a client like that to catch the error. If an uncompliant document is given to a client it MAY try to parse it to the best of its abilities, erroring (in a user friendly manner) if it cant make sense of it, this includes trying to fix the errors, but that would be advanced to implement and wont always work. </p> 
         <p> An example of such an uncompliance would be if the metadata tags are in the wrong order. Some clients might rely on the order of the metadata tags, and would interpret the document wrong or fail to interpret it entirely if the metadata tags are in the wrong order. While other clients might be completely oblivious to the order of the metadata tags and would interpret the document just fine. Both cases would be an acceptable way to handle the error. </p>
         <p>Some clients, might be designed to validate the compliance of documents and provide helpful feedback if it finds any problems with them. These clients should of course always be completely accurate and correctly flag all possible uncompliant documents. They may also show recommendations for following best practices. </p>
 
-        <h3> 5.2 Server behavior </h3>
+        <h3> 4.2 Server behavior </h3>
         <p> It's important to note here that a server refers to any piece of software that transmits ATHN documents, which includes CGI scripts and other ways of doing server side rendering. </p>
         <p> Servers SHOULD have some mechanism in place to ensure that the documents they transmit are always compliant. There are many different types of server software and it's up to the developer of the server to determine how to best ensure this. </p>
         <p> Here are some examples of how you might implement such a check: </p>

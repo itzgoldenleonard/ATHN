@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1 id="title"> ATHN over https specification </h1>
-        <p> Version: 0.1.0 (alpha) </p>
+        <p> Version: 0.1.1 (alpha) </p>
         <p> Project ATHN is still very early in development. Suggestions and discussion are very welcome. Expect everything to change at any time. </p>
 
 
@@ -84,73 +84,64 @@ openssl pkcs12 -export -in client_cert.pem -inkey client_key.pem -out client_cer
 
         <h3> 3.1 The form data json encoding </h3>
         <p> A write request can be sent with form data. The form data is encoded in the following json format. </p>
-        <p> The entire form data is an object with keys of the same name as the IDs of the form fields in the form. </p>
+        <p> The entire form data is an array of input objects <p>
         <p> Each input is an object with the keys:  </p>
         <ul>
+            <li> id: String </li>
             <li> type: String (can only have the same values as the form field types specified in the ATHN markup language specification) </li>
-            <li> optional: Boolean </li>
-            <li> empty: Boolean or null </li>
             <li> value: the same as the input's type or null </li>
         </ul>
-        <p> If optional is false, empty should be null, although it should never be read in that case. If optional and empty are both true, value should be null, although it should never be read in that case.  </p>
-        <p> Lists can contain multiple children. The value field of a list type input is a list of form data json objects. Even if the list only has 1 child. </p>
-        <p> Here is an example of a json encoded form data object: </p>
+        <p> if value is null, that means that the form field optional and empty. If value is null, but the form field is required, the client has made a big mistake and the server must be able to handle the error (the server should know the schema). </p>
+        <p> Lists can contain multiple children. The value field of a list type input is a list of form data json arrays. Even if the list only has 1 child. </p>
+        <p> Here is an example of a json encoded form data array: </p>
         <pre>
-{
-    "username": {
+[
+    {
+        "id": "username",
         "type": "string",
-        "optional": false,
-        "empty": null,
         "value": "Example user"
     },
-    "age": {
+    {
+        "id": "age",
         "type": "int",
-        "optional": false,
-        "empty": null,
         "value": 18
     },
-    "gender": {
+    {
+        "id": "gender",
         "type": "string",
-        "optional": true,
-        "empty": true,
         "value": null
     },
-    "interests": {
+    {
+        "id": "interests",
         "type": "list",
-        "optional": true,
-        "empty": false,
         "value": [
-            {
-                "interest": {
+            [
+                {
+                    "id": "interest",
                     "type": "string",
-                    "optional": false,
-                    "empty": null,
                     "value": "Computer science"
                 },
-                "weight": {
+                {
+                    "id": "weight",
                     "type": "float",
-                    "optional": true,
-                    "empty": false,
                     "value": 0.8
                 }
-            },
-            {
-                "interest": {
+            ],
+            [
+                {
+                    "id": "interest",
                     "type": "string",
-                    "optional": false,
-                    "empty": null,
                     "value": "Politics"
                 },
-                "weight": {
+                {
+                    "id": "weight",
                     "type": "float",
-                    "optional": true,
-                    "empty": true,
                     "value": null
                 }
-            }
+            ]
         ]
     }
-}</pre>
+]</pre>
 
         <h3> 3.2 Write responses </h3>
         <p> If the write request is successful the server responds with an acknowledgement (A success status code) and optionally an ATHN document. This is the document that will be redirected to if the redirect property was applied to the submit button. </p>

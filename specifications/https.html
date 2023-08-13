@@ -93,6 +93,7 @@ openssl pkcs12 -export -in client_cert.pem -inkey client_key.pem -out client_cer
         </ul>
         <p> if value is null, that means that the form field optional and empty. If value is null, but the form field is required, the client has made a big mistake and the server must be able to handle the error (the server should know the schema). </p>
         <p> Lists can contain multiple children. The value field of a list type input is a list of form data json arrays. Even if the list only has 1 child. </p>
+        <p> File type inputs are encoded with the base64 encoding </p>
         <p> Here is an example of a json encoded form data array: </p>
         <pre>
 [
